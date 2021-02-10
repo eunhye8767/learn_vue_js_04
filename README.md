@@ -147,3 +147,175 @@
 	```
 	![2-3-4](./_images/2-3-4.png)<br />
 	<br />
+
+## 3. 라우터
+### 3.1. 라우터 설치 및 라우터 구현
+#### 3.1.1. 참고자료
+- [Vue.js 중급 ES6 Modules 강좌 링크](https://www.inflearn.com/course/vue-pwa-vue-js-%EC%A4%91%EA%B8%89/lecture/11542?tab=curriculum)
+- [Vue.js 중급 ES6 Enhanced Object Literal 강좌 링크](https://www.inflearn.com/course/vue-pwa-vue-js-%EC%A4%91%EA%B8%89/lecture/11537?tab=curriculum)
+
+<br />
+
+1. [터미널] <code>npm i vue-router --save</code> 명령어 실행(= 라우터 설치)
+2. 설치가 완료되면 [package.json] **"dependencies" 에 "vue-router" 추가**된다<br />
+	- dependencies 에 들어가는 라이브러리들은 실제로 웹을 실행시킬 때 필요한 비즈니스 로직 또는 웹의 동작을 담당하는 라이브러리이며, 배보할 때 포함되어 있어야 하는 라이브러리.<br />
+	![3-1-1](./_images/3-1-1.png)<br />
+	<br />
+
+3. [main.js] 는 기본적으로 애플리케이션의 설정(플러그인, 라이브러리, 구조 등)들을 파악할 수 있어야 한다. (== 구조도가 한 눈에 쉽게 파악)<br />
+따라서, router 관련된 정보는 새로운 폴더를 생성하여 해당 폴더에 적용을 한다.
+<br />
+
+4. src 폴더 밑에 "router" 폴더 생성 -> index.js 파일 생성, 아래 코드적용
+	```javascript
+	import Vue from 'vue'
+	import VueRouter from 'vue-router'
+
+	vue.use(VueRouter);
+
+	const router = new VueRouter({
+	  routes: [
+			path: '',
+	  ]
+	})
+	```
+<br />
+
+5. 변수 router에 routes를 이용하여 정보를 담는다.
+	- routes 속성에 path, component 정보를 적용한다.
+	- components == page 로 이해하면 된다.
+	```javascript
+	import Vue from 'vue'
+	import VueRouter from 'vue-router'
+
+	vue.use(VueRouter);
+
+	const router = new VueRouter({
+	  routes: [
+	    {
+	      // path : URL 주소
+	      path: '/',
+	      // component : URL 주소로 갔을 때 표시될 컴포넌트
+	      component: 'MainPage',
+	    },
+	    {
+	      path: '',
+	      component: '',
+	    },
+	    {
+	      path: '',
+	      component: '',
+	    }
+	  ]
+	})
+	```
+<br />
+
+6. src 폴더 밑에 views 폴더 생성
+	- views 폴더에는 url 마다 뿌려지는 컴포넌트들을 등록할 예정
+	<br />
+
+7. [views] 폴더 아래에 NewsView, JobsView, AskView 뷰페이지를 생성
+	- Vetur 플러그인 설치로 인해 'vue' 로 자동완성기능으로 템플릿 작성을 한다
+	<br />
+
+8. [router/index.js] 각각의 url 주소를 기재한다
+	```javascript
+	import Vue from 'vue'
+	import VueRouter from 'vue-router'
+
+	vue.use(VueRouter);
+
+	const router = new VueRouter({
+	  routes: [
+	    {
+	      // path : URL 주소
+	      path: '/news',
+	      // component : URL 주소로 갔을 때 표시될 컴포넌트
+	      component: '',
+	    },
+	    {
+	      path: '/ask',
+	      component: '',
+	    },
+	    {
+	      path: '/jobs',
+	      component: '',
+	    }
+	  ]
+	})
+	```
+<br />
+
+9. [router/index.js] url 주소로 이동했을 때의 컴포넌트를 불러온다.
+	- 불러올 컴포넌트를 연결한다.
+		```javascript
+		import NewsView from '../views/NewsView.vue'
+		import AskView from '../views/AskView.vue'
+		import JobsView from '../views/JobsView.vue'
+		```
+	- 연결한 컴포넌트를 routes - component 속성에 적용시킨다
+		```javascript
+		import Vue from 'vue'
+		import VueRouter from 'vue-router'
+
+		import NewsView from '../views/NewsView.vue'
+		import AskView from '../views/AskView.vue'
+		import JobsView from '../views/JobsView.vue'
+
+		vue.use(VueRouter);
+
+		const router = new VueRouter({
+		  routes: [
+		    {
+		      // path : URL 주소
+		      path: '/news',
+		      // component : URL 주소로 갔을 때 표시될 컴포넌트
+		      component: NewsView,
+		    },
+		    {
+		      path: '/ask',
+		      component: AskView,
+		    },
+		    {
+		      path: '/jobs',
+		      component: JobsView,
+		    }
+		  ]
+		})
+		```
+<br />
+
+10. [router/index.js] 파일을 main.js 파일에서 import 하기 위해 변수 router를 export 로 수정한다
+	```javascript
+	// index.js
+	export const router = new VueRouter({ })
+	```
+	<br />
+
+11. [main.js] 파일에 router 를 import 해준다.
+	```javascript
+	// main.js
+	import { router } from './router/index';
+
+	new Vue({
+	  router,
+	}).$mount('#app')
+	```
+<br />
+
+### 3.2. router-view를 이용한 라우팅 컴포넌트 표시
+1. [App.vue]에서 라우팅으로 설정한 컴포넌트로 보이게 적용을 해야 한다.<br />이 때, router-view 컴포넌트 태그를 이용한다
+	```html
+	<router-view></router-view>
+	```
+
+2. [터미널] <code>npm run serve</code> 명령어를 실행 후 localhost:8080 을 브라우저에서 확인하면 빈 페이지로 확인이 된다.<br />그 이유는 router에서 기본 url 값 '/' 이 설정되어 있지 않기 때문이다.<br />
+	![3-2-1](./_images/3-2-1.png)<br />
+
+3. /news, /ask, /jobs 로 페이지를 이동하면 해당 페이지에 맞는 컴포넌트의 내용이 제대로 보여진다.<br />
+	![3-2-2](./_images/3-2-2.png)<br />
+<br />
+
+4. **라우팅 라이브러리를 사용할 때 URL에 #이 들어가는 이유?**<br />브라우저 히스토리 조작을 위해서 #이 들어간다.<br />쉽게 말해 URL에 입력된 값을 자바스크립트로 구분하기 위한 것이라고 이해하면 된다.
+
