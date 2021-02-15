@@ -148,6 +148,8 @@
 	![2-3-4](./_images/2-3-4.png)<br />
 	<br />
 
+4. **개발 작업을 진행할 때엔 ESLint 설정을 켜두고 사용하는 것을 권장**한다.
+
 ## 3. 라우터
 ### 3.1. 라우터 설치 및 라우터 구현
 #### 3.1.1. 참고자료
@@ -433,3 +435,95 @@
 <br />
 <br />
 
+## 4. API 구현
+### 4.1. axios를 이용한 api 호출
+#### 참고자료 API
+- [API 참고사이트](https://github.com/tastejs/hacker-news-pwas/blob/master/docs/api.md)
+	- news, ask, jobs API 활용 예정
+	<br />
+
+#### 구성 팁
+- views 라는 폴더의 컴포넌트에는 페이지의 라우팅에 대한 정보만 들어가는 것이 좋다.
+- 데이터에 관련된 로직에 관한 것을 views에 적용하는 것은 옳지 않다. (유지보수 등에 관리하기가 좋지 않다.)
+
+#### axios 적용법
+1. [터미널] <code>npm i axios --save</code> 명령어 실행
+2. [ NewsView.vue ] 아래 코드로 파일 작성
+	```html
+	<template>
+	  <div>
+	    
+	  </div>
+	</template>
+	```
+	```javascript
+	import axios from 'axios';
+
+	export default {
+	  data() {
+	    return {
+	      user: []
+	    }
+	  },
+	  created() {
+	    axios.get('https://api.hnpwa.com/v0/news/1.json')
+	      .then(function(response) {
+	        console.log(response);
+	    })
+	      .catch(function(error){
+	        console.log(error);
+	    })
+	  }
+	}
+	```
+3. [터미널] <code>npm run serve</code> 명령어로 서버 실행
+4. Local 사이트를 브라우저에서 확인 가능
+	- 개발자도구 > network 패널 탭 > XHR 에서 axios된 내용을 확인할 수 있다.
+		![4-1-1](./_images/4-1-1.png)<br />
+
+5. [개발자도구] 콘솔 창에서 해당 로그 확인 가능<br />
+	![4-1-2](./_images/4-1-2.png)<br />
+
+6. 전달 받은 값을 data - user 속성에 대입시킨다
+	- 변수 vm을 생성하여 this 값을 대입한다
+	```html
+	<template>
+	  <div>
+	    <div v-for="user in users">{{ user }}</div>
+	  </div>
+	</template>
+	```
+	```javascript
+	import axios from 'axios';
+
+	export default {
+	  data() {
+	    return {
+	      user: []
+	    }
+	  },
+	  created() {
+	    var vm = this;
+
+		  axios.get('https://api.hnpwa.com/v0/news/1.json')
+		    .then(function(response) {
+				  console.log(response);
+	        vm.user = response.data;
+			})
+		    .catch(function(error){
+	        console.log(error);
+			})
+		}
+	}
+	```
+
+7. [ vue 개발자도구 ] 불러온 data의 값들을 확인할 수 있다
+
+8. 불러온 data 값에서 title 속성의 값만 불러오고 싶을 때엔 .title 속성을 추가하면 된다.
+	```html
+	<template>
+	  <div>
+	    <div v-for="user in users">{{ user.title }}</div>
+	  </div>
+	</template>
+	```
