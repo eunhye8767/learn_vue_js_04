@@ -318,4 +318,89 @@
 <br />
 
 4. **라우팅 라이브러리를 사용할 때 URL에 #이 들어가는 이유?**<br />브라우저 히스토리 조작을 위해서 #이 들어간다.<br />쉽게 말해 URL에 입력된 값을 자바스크립트로 구분하기 위한 것이라고 이해하면 된다.
+<br />
 
+### 3.3. redirect 속성과 router-link
+#### 3.3.1. 참고자료
+- [케밥 케이스 컴포넌트 스타일 가이드 (Essential)](https://vuejs.org/v2/style-guide/#Multi-word-component-names-essential)
+- [파스칼 케이스 컴포넌트 스타일 가이드 (Strongly Recommended)](https://vuejs.org/v2/style-guide/#Component-name-casing-in-templates-strongly-recommended)
+<br />
+
+#### 3.3.2. redirect 속성
+1. '/' 루트로 접속했을 때 연결된 router-view 가 없을 경우 빈 페이지가 보여지는데,<br />빈 페이지가 아닌 **'/'로 접속하면 특정 페이지를 보이게 적용**한다.
+2. **redirect 속성을 이용하여 '/' 접속 시, 특정 폴더를 적용하여 해당 컴포넌트 페이지가 보이게 한다.**
+3. '/'로 접속하게 되면 '/news' 폴더의 컴포넌트 페이지가 보이게 적용한다.
+	```javascript
+	// index.js
+	export const router = new VueRouter({
+	   routes: [
+	     {
+	       path: '/',
+	       redirect: '/news',
+	     },
+	  ]
+	})
+	```
+
+4. '/'로 접속 시, '/news'로 자동 바뀌면서 해당 컴포넌트 페이지가 보인다.<br />
+	![3-3-1](./_images/3-3-1.png)<br />
+	<br />
+
+#### 3.3.3. router-link 속성
+1. components 폴더에 ToolBar.vue 컴포넌트 파일을 생성한다
+2. App.vue 파일에 ToolBar 컴포넌트를 적용한다.
+	```html
+	<template>
+	  <div id="app">
+	    <tool-bar></tool-bar>
+	    <router-view></router-view>  
+	  </div>
+	</template>
+	```
+	```javascript
+	import ToolBar from './components/ToolBar.vue';
+
+	export default {
+	  components: {
+	    ToolBar,
+	  },
+	}
+	```
+	#### 컴포넌트 태그 형식은 파스칼 문법이 아닌 케밥 문법으로 적용한다.
+	- **컴포넌트 태그 형식**
+		- 파스칼 케이스 : <ToolBar></ToolBar>
+		- 케밥 문법 : <tool-bar></tool-bar>
+	- **케밥 문법으로 사용하는 이유는 해당 컴포넌트 태그를 ctrl 또는 alt 누르고 클릭하면 해당 컴포넌트 태그 .vue 페이지로 이동**이 된다.
+		- 작은 단어 두개를 - 으로 연결한 컴포넌트 태그로 표기한다.<br />
+		![3-3-2](./_images/3-3-2.png)<br />
+	- Vue에서 권장하는 컴포넌트 태그는 파스칼 케이스지만, **VS Code를 사용할 경우 케밥 문법으로 VS Code에서 제공하는 기능을 사용**하는 것을 추천.
+	<br />
+
+3. [ Toolbar.vue ] router-link 로 코드를 작성한다.
+	- router-link 기본 문법
+	```html
+	<router-link to="">router link</router-link>
+	```
+	- router-link 태그를 사용하면 자동적으로 a 태그로 보여진다
+	```html
+	<template>  
+	  <div>
+	    <router-link to="">News</router-link>
+	    <router-link to="">Ask</router-link>
+	    <router-link to="">Jobs</router-link>
+	  </div>
+	</template>
+	```
+	![3-3-3](./_images/3-3-3.png)<br />
+<br />
+
+4. router-link 태그에서 to 속성에 이동할 링크 URL을 적용한다
+	```html
+	<template>  
+	  <div>
+	    <router-link to="/news">News</router-link>
+	    <router-link to="/ask">Ask</router-link>
+	    <router-link to="/jobs">Jobs</router-link>
+	  </div>
+	</template>
+	```
