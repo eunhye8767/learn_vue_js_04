@@ -410,3 +410,26 @@
 - <code><style scoped></style></code> :<br />해당 컴포넌트 .vue 파일에만 적용되는 css
 - < router-link /> :<br />active인 상태일 때의 클래스 자동추가 == router-link-exact-active
 <br />
+
+### 3.5. 라우터 폴더 작명 팁과 라우터 mode 안내
+#### 3.5.1. 라우터 폴더 작명  
+- 기존의 router(라우터) 폴더명을 routes 로 변경한다
+- 기존의 router로 명명했을 때엔 일반폴더로 되어 있었지만 routes로 하게 되면 일반폴더와 달라 구분이 된다.<br />
+	![3-5-1](./_images/3-5-1.png)<br />
+- routes 로 폴더명을 구분했으면 main.js 에서 import router 의 경로도 수정해줘야 한다.
+- import 경로가 맞는 지 확인을 할 경우, 변수 영역에 ctrl 또는 alt 와 함께 클릭하여 파일을 확인 해본다.<br />
+	![3-5-2](./_images/3-5-2.png)<br />
+	<br />
+
+#### 3.5.2. 라우터 mode 안내
+- [ routes/index.js ] **new VueRouter 인스턴스에 mode를 적용하여 url 주소에 표시된 # 을 제거**한다.
+	```javascript
+	export const router = new VueRouter({
+	  mode: 'history',
+	}
+	```
+	![3-5-3](./_images/3-5-3.png)<br />
+<br />
+<br />
+<br />
+
