@@ -527,3 +527,96 @@
 	  </div>
 	</template>
 	```
+	<br />
+
+### 4.2. axios의 api 함수 구조화 방법 및 실습안내
+1. 컴포넌트마다 api를 호출해서 쓰는 것이 아닌 **api 폴더를 만들어서 관리**해야 한다
+	```javascript
+	// NewsView.vue
+	import axios from 'axios';
+
+	export default {
+	  data() {
+	    return {
+	      users: []
+	    }
+	  },
+	  created() {
+	    var vm = this;
+	
+		  axios.get('https://api.hnpwa.com/v0/news/1.json')
+		    .then(function(response) {
+				  console.log(response);
+	        vm.users = response.data;
+			})
+		    .catch(function(error){
+	        console.log(error);
+			})
+		}
+	}
+	```
+2. src 폴더에 api 폴더를 만들고 index.js 파일을 생성한다.<br />
+	- 일반 폴더 아이콘과 다른 api 폴더 아이콘을 확인할 수 있다.
+		![4-2-1](./_images/4-2-1.png)<br />
+
+3. [src/api/index.js] import axios from 'axios';
+	- from 'axios' :<br />nodo_modules 에 설치된 axios 라이브러리를 갖고 오는 것을 의미한다.
+	```javascript
+	import axios from 'axios';
+	```
+
+4. NewsView.vue 에서 axios를 호출한 코드를 api/index.js 에 함수로 변환하여 코드를 작성한다.
+	- API을 각 컴포넌트별로 적용을 하게 되면 동일한 코드를 각 컴포넌트 페이지에 적용하기 때문에 유지보수 등 관리가 용이하지 않다.<br /> 따라서, 별도의 API 폴더를 만들어 관리하는 것이 좋다.
+	```javascript
+	// api/index.js 
+
+	import axios from 'axios';
+
+	// 1. HTTP Request & Response와 관련된 기본 설정
+	const config = {
+	  baseUrl: 'https://api.hnpwa.com/v0/'
+	};
+
+	// 2. API 함수들을 정리
+	function fetchNewsList() {
+	  // return axios.get(config.baseUrl+'news/1.json');
+	  return axios.get(`${config.baseUrl}news/1.json`);
+	};
+
+	export {
+	  fetchNewsList
+	};
+	```
+
+5. api/index.js 코드 작성이 끝났으면 NewsView.vue 컴포넌트 파일에서 해당 파일을 import 한다.
+	```html
+	<!-- NewsView.vue -->
+	<template>
+	  <div>
+	    <div v-for="user in users">{{ user.title }}</div>
+	  </div>
+	</template>
+	```
+	```javascript
+	// NewsView.vue
+	import { fetchNewsList } from '../api/index.js';
+
+	export default {
+	  data() {
+	    return {
+	      users: []
+	    }
+	  },
+	  created() {
+	    var vm = this;
+		  fetchNewsList()
+		    .then(function(response) {
+				  console.log(response);
+	        vm.users = response.data;
+	      })
+		    .catch(function(error){
+	        console.log(error);
+	      })
+		}
+	}
+	```
