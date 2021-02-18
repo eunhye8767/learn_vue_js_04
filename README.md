@@ -665,3 +665,67 @@
 		  .catch(error => console.log(error));
 		```
 <br />
+
+### 4.4. 자바스크립트 this 4가지와 화살표 함수의 this
+#### 4.4.1. 자바스크립트 this 4가지
+1. **this == window (최상단의 전역 변수)**
+	- 자바스크립트의 this 는 전역 변수로 시작을 한다
+	- window 는 브라우저의 객체이다. 
+		- 기본적으로 브라우저, dom에 대한 접근을 나타낸다
+		- 최상단의 전역변수 window
+	```javascript
+	var a = 10;
+	a            // 10
+	window.a     // 10
+	this         // window 관련 정보
+	```
+	![4-4-1](./_images/4-4-1.png)<br />
+	<br />
+
+2. **함수 안에서 this == 최상단의 전역변수(window)**<br />
+	![4-4-2](./_images/4-4-2.png)<br />
+	<br />
+
+3. **생성자 함수에서 this == 함수 자체를 가리킨다**<br />
+	![4-4-3](./_images/4-4-3.png)<br />
+	<br />
+
+4. **비동기 처리에서의 this**
+	- data 호출하는 부분도 비동기 처리이다.
+	- 호출 전 this 와 호출 후 this 가 가리키는 것이 다르다
+		- 호출 전 this == 해당 뷰 컴포넌트
+		- 호출 후 this == undefined
+	```javascript
+	created() {
+	  console.log('호출 전: ' + this);
+	  fetchNewsList()
+	    .then(function(response) {
+	      console.log('호출 후: ' + this);
+	    })
+	}
+	```
+	![4-4-4](./_images/4-4-4.png)<br />
+	<br />
+
+#### 4.4.2 화살표 함수의 this
+- **화살표 함수에서 this 를 사용하게 되면 호출되는 위치의 this 를 가져오게 된다.**
+- 호출 전 this와 호출 후 this 가 동일한 정보를 가리키게 된다.
+	```javascript
+	created() {
+	  console.log('호출 전: ' + this);
+	  fetchNewsList()
+	    .then(response => {
+	      console.log('호출 후: ' + this);
+				this.users = response.data;
+	    })
+	}
+	```
+	![4-4-5](./_images/4-4-5.png)<br />
+
+- 화살표 함수를 사용하면 this 바인딩을 할 필요가 없다.<br />
+	![4-4-6](./_images/4-4-6.png)<br />
+<br />
+
+#### ※ 자바스크립트의 this
+- 콜백에서 this를 잃어버리는 것이 자바스크립트가 가진 원래의 생김새
+- 화살표 함수 사용의 최대 강점인 this 사용법
