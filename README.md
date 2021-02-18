@@ -620,3 +620,48 @@
 		}
 	}
 	```
+<br />
+
+### 4.3. [실습] JobsView 와 AskView 구현
+- created() {} = 라이프사이클 훅, 컴포넌트가 생성되지마자 로직 실행
+	- 데이터 요청 시엔 created() 또는 beforeMount 를 사용한다.
+- [Reactivity in Depth 자세히 보기](https://vuejs.org/v2/guide/reactivity.html#ad)
+- **반드시 export 를 해야 import 로 사용할 수 있다.**
+	```javascript
+	// index.js
+	export {
+	  fetchAskList
+	};
+
+	// AskView.vue
+	import { fetchAskList } from 'index.js';
+	```
+- v-for = 'item in ask"
+ - v-for 디렉티브는 기본적으로 ask 라는 배열을 반복해서 div 태그를 돌린다.
+ - item 은 ask를 한 번씩 접근(순회)할 때 각각의 값이 된다.
+ ```html
+ <div v-for="item in ask">{{item.title}}</div>
+ ```
+- [ JobsView.vue ] 화살표 함수로 적용하기
+	- 화살표 함수 적용 전
+		```javascript
+		created() {
+		  var vm = this;
+		  fetchJobsList()
+		    .then(function(response) {
+		      vm.jobs = response.data;
+		    })
+		    .catch(function(error){
+		      console.log(error);
+		    })
+		}
+		```
+	- **화살표 함수 적용 후**
+		- 한줄이어서 {} 생략 가능
+		- var vm 선언없이 this로 적용 가능하다. [this 바인딩 바로가기](#44-자바스크립트-this-4가지와-화살표-함수의-this)
+		```javascript
+		etchAskList()
+		  .then(response => this.jobs = response.data)
+		  .catch(error => console.log(error));
+		```
+<br />
