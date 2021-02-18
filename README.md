@@ -724,8 +724,88 @@
 
 - 화살표 함수를 사용하면 this 바인딩을 할 필요가 없다.<br />
 	![4-4-6](./_images/4-4-6.png)<br />
-<br />
 
 #### ※ 자바스크립트의 this
 - 콜백에서 this를 잃어버리는 것이 자바스크립트가 가진 원래의 생김새
 - 화살표 함수 사용의 최대 강점인 this 사용법
+
+<br />
+
+### 4.5. 자바스크립트 비동기 처리(1) - Callback
+1. Callbak(콜백) 설명
+	- Callback(콜백) 이란? 어떤 특정 함수나 기능이 종료되는 시점에 실행되는 함수를 의미
+	- 자바스크립트는 함수를 인자로 넘길 수 있는데, 인자로 전달되는 함수를 콜백함수라고 표현
+
+2. src/callback.html 페이지를 생성하고 아래 코드를 적용한다
+	- 전형적인 콜백 함수 문법(참고 2번)
+	```html
+	<!DOCTYPE html>
+	<html lang="ko">
+	<head>
+	  <meta charset="UTF-8">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <title>Callback</title>
+	</head>
+	<body>
+	  <div>jquery ajax</div>
+
+	  <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	  <script>
+	    function fetchData() {
+	      // 1
+	      var result = [];
+
+	      // 2
+	      $.ajax({
+	        url: 'https://api.hnpwa.com/v0/news/1.json',
+	        success: function(data) {
+	          console.log('데이터 호출 결과', data);
+	          result = data;
+	        }
+	      });
+
+	      // 3
+	      console.log('함수 결과', result);
+	    }
+
+	    fetchData();
+	  </script>
+	</body>
+	</html>
+	```
+
+3. 위 코드로 적용한 html 를 확인해보면 result 로 값을 불러오지 못 했다<br />
+	![4-5-1](./_images/4-5-1.png)<br />
+
+4. ajax(데이터 호출, 비동기처리) 자료를 받기 전에 <code>console.log('함수결과', result)</code> 코드가 실행되었기 때문에 result 가 data의 값을 받아오지 못 했다. 
+	- 자바스크립의 특성
+	- 비동기 처리의 콜백함수
+
+5. data의 값을 받은 result 값을 출력하려면 ajax 안에 적용을 해야 한다
+	```javascript
+	function fetchData() {
+	  // 1
+	  var result = [];
+	
+	  // 2
+	  $.ajax({
+	    url: 'https://api.hnpwa.com/v0/news/1.json',
+	    success: function(data) {
+	      console.log('데이터 호출 결과', data);
+	      result = data;
+	      console.log('함수 결과', result);
+	    }
+	  });
+	
+	  // 3
+	  // console.log('함수 결과', result);
+	}
+	
+	fetchData();	
+	```
+	![4-5-2](./_images/4-5-2.png)<br />
+
+#### ※ 참고자료
+- [비동기 처리와 콜백 함수 자세히보기](https://joshua1988.github.io/web-development/javascript/javascript-asynchronous-operation/)
+
