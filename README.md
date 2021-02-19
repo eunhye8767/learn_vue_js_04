@@ -911,3 +911,22 @@
 #### ※ 참고자료
 - [프로미스 쉽게 이해하기 글 주소 - 자세히보기](https://joshua1988.github.io/web-development/javascript/promise-for-beginners/)
 - [Promise MDN 주소 - 자세히보기](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+
+<br />
+<br />
+<br />
+
+## 5. 스토어 구현
+### 5.1. Vuex 설치 및 Vuex가 적용된 앱 구조 소개
+- Before(Vuex 설치 전) , After(Vuex 설치 후)
+- API 정보를 바로 NewsView에 담는 것이 아니라 Vuex(상태관리 라이브러리) 스테이트에 담은 후, NewsView로 담으려고 한다.<br />
+	![5-1-1](./_images/5-1-1.png)<br />
+- [Vuex 자세히 보기](https://github.com/eunhye8767/learn_vue_js_02#6-vuex)
+
+#### 5.1.1. Vuex 설치
+1. <code>npm i vues</code> 명령어로 vuex 를 설치한다
+2. 설치가 완료되면 프로젝트 루트폴더의 package.json - dependencies 위치에 vuex가 추가된 것을 확인할 수 있다.<br />
+	![5-1-2](./_images/5-1-2.png)<br />
+	<br />
+
+	
