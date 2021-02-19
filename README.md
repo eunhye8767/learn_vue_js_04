@@ -929,4 +929,67 @@
 	![5-1-2](./_images/5-1-2.png)<br />
 	<br />
 
+### 5.2. Vuex 모듈화 및 state 적용
+#### 5.2.1. Vuex 란?
+- Vuex는 상태관리 도구이다.
+- 상태라는 것은 **여러 컴포넌트 간에 공유**되는 데이터 속성
+
+#### 5.2.2. Vuex 모듈화 및 state 적용방법
+1. src/main.js 파일은 파일들의 구조화를 보여져야 하기 때문에<br />src 폴더 아래에 store 폴더 생성 후 index.js 파일을 만든다.
+2. [ /src/store/index.js ] 아래와 같이 코드를 적용한다.
+	```javascript
+	import Vue from 'vue';
+	import Vuex from 'Vuex';
 	
+	Vue.use(Vuex);
+	
+	new Vuex.Store({
+	  state: {
+		
+	  }
+	});
+	```
+
+3. [ NewsView.vue ] users의 데이터를 다른 컴포넌트에서도 사용할 수 있게 Vuex - state 를 사용한다.
+	- 서비스가 복잡해져을 때, 특히 컴포넌트 레벨이 깊어지거나 관계가 복잡해졌을 때 유용하게 데이터를 조작할 수 있다.
+	```javascript
+	// ../store/index.js
+	import Vue from 'vue';
+	import Vuex from 'Vuex';
+
+	Vue.use(Vuex);
+
+	new Vuex.Store({
+	  state: {
+	    news: []
+	  }
+	});
+	```
+
+4. [ src/store/index.js ] 새로 생성한 Vuex 인스턴스를 변수 store 로 지정한다.
+	- 다른 컴포넌트 파일에서도 사용해야 하기 때문에 변수를 지정하고 export 를 적용한다.
+	```javascript
+	export const store = new Vuex.Store({
+	  state: {
+	    news: []
+	  }
+	});
+	```
+
+5. [ main.js ] 파일에 Vuex 를 연결해준다
+	```javascript
+	import Vue from 'vue'
+	import App from './App.vue'
+	import { router } from './routes/index.js';
+	import { store } from './store/index.js';
+
+	Vue.config.productionTip = false
+
+	new Vue({
+	  render: h => h(App),
+	  router,
+	  store,
+	}).$mount('#app')
+	```
+	![5-2-1](./_images/5-2-1.png)<br />
+	<br />
