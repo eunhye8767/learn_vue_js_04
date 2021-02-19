@@ -783,6 +783,7 @@
 	- 비동기 처리의 콜백함수
 
 5. data의 값을 받은 result 값을 출력하려면 ajax 안에 적용을 해야 한다
+	- success 는 ajax에서만 유효한 콜백 함수이다.
 	```javascript
 	function fetchData() {
 	  // 1
@@ -809,3 +810,104 @@
 #### ※ 참고자료
 - [비동기 처리와 콜백 함수 자세히보기](https://joshua1988.github.io/web-development/javascript/javascript-asynchronous-operation/)
 
+<br />
+
+### 4.6. 자바스크립트 비동기 처리(2) - Promise
+#### 4.6.1. Promise(프로미스)를 사용하는 이유?
+콜백으로 비동기 처리할 때의 문제점(콜백 헬, 코드 인덴트, 사고의 위배 등)들이 재기되어 왔다.<br />복잡한 데이터 요청이 많아지면 콜백 헬이 열리게 된다. 그래서 콜백 관리를 좀 더 효율적으로 하고, 코드 자체에서도 직관적인 코드를 짜보자는 측면에서 Promise(프로미스)라는 새로운 비동기처리 패턴이 등장했다.
+
+#### 4.6.2. Promise(프로미스) 기본 코드
+- Promise 객체에서만 then(성공) 과 catch(실패) 를 사용할 수 있다
+	```javascript
+	function getData(callback) {
+	  // new Promise() 추가
+	  return new Promise(function(resolve, reject) {
+	    $.get('url 주소/products/1', function(response) {
+	      // 데이터를 받으면 resolve() 호출
+	      resolve(response);
+	    });
+	  });
+	}
+
+	// getData()의 실행이 끝나면 호출되는 then()
+	getData().then(function(tableData) {
+	  // resolve()의 결과 값이 여기로 전달됨
+	  console.log(tableData); // $.get()의 reponse 값이 tableData에 전달됨
+	});
+	```
+
+#### 4.6.3. callback 함수를 promise(프로미스)로 변환
+1. [ promise.html ] 아래의 callback 함수를 promise 로 변환하려고 한다
+	- <code>.ajax({})</code> 코드를 promise 로
+	```javascript
+	function fetchData() {
+	  // 1
+	  var result = [];
+
+	  // 2
+	  $.ajax({
+	    url: 'https://api.hnpwa.com/v0/news/1.json',
+	    success: function(data) {
+	      console.log('데이터 호출 결과', data);
+	      result = data;
+	      console.log('함수 결과', result);
+	    }
+	  });
+
+	  // 3
+	  // console.log('함수 결과', result);
+	}
+
+	fetchData();
+	```
+
+2. ajax를 호출할 **callAjax** 함수를 생성한다
+	- new Promise 로 객체를 생성해야 한다.
+	- promise 는 **항상 resolve, reject 를 인자로 받는다**
+	- ajax를 호출했고 데이터 url도 지정했다
+	```javascript
+	function call Ajax() {
+	  return new Promise(function(resolve, reject) {
+	    $.ajax({
+	      url:'https://api.hnpwa.com/v0/news/1.json'
+	    })
+	  });
+	}
+	```
+
+3. ajax 호출을 성공했을 때의 코드를 아래와 같이 적용한다
+	- .then() 은 계속 체인링 할 수 있다
+	- .catch() 도 적용해줘야하는 거 명심!!!
+	```javascript
+	function call Ajax() {
+	  return new Promise(function(resolve, reject) {
+	    $.ajax({
+	      url:'https://api.hnpwa.com/v0/news/1.json',
+	      success: function(data) {
+	        resolve(data);
+	      }
+	    })
+	  });
+	}
+
+	function fetchData() {
+	  // 1
+	  var result = [];
+
+	  // 2
+	  callAjax()
+	    .then(function(data) {
+	      console.log('데이터 호출 결과', data);
+	      result = data;
+	      console.log('함수 결과', result);
+	    })
+			.catch()
+	}
+
+	fetchData();
+	```
+
+
+#### ※ 참고자료
+- [프로미스 쉽게 이해하기 글 주소 - 자세히보기](https://joshua1988.github.io/web-development/javascript/promise-for-beginners/)
+- [Promise MDN 주소 - 자세히보기](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise)
