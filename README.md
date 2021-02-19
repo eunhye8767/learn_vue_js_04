@@ -993,3 +993,220 @@
 	```
 	![5-2-1](./_images/5-2-1.png)<br />
 	<br />
+
+### 5.3. NewsView에 actions와 mutations 적용
+1. NewsView 페이지 로직을 보면,<br />created가 되자마자 fetchNewsList()로 데이터를 불러와서 users에 정보를 담는다.
+	- API(데이터 호출)를 Vuex에서는 actions
+	```javascript
+	// NewsView
+	created() {
+	  var vm = this;
+	  // 1
+	  fetchNewsList()
+	    .then(function(response) {
+	      console.log(response);
+	      // 2
+	      vm.users = response.data;
+	    })
+	    .catch(function(error){
+	      console.log(error);
+	    })
+	}
+	```
+
+2. [ store/index.js ] API 호출을 위해 actions 속성을 추가하고 FETCH_NEWS 함수를 생성한다.
+	- NewsView.vue 에 적용했던 import fetchNewsList 정보는 store/index.js 로 적용한다
+	```javascript
+	// store/index.js
+	
+	import Vue from 'vue';
+	import Vuex from 'vuex';
+	
+	import { fetchNewsList } from '../api/index.js';
+	
+	Vue.use(Vuex);
+	
+	export const store = new Vuex.Store({
+	  state: {
+	    news: []
+	  },
+	  actions: {
+	    FETCH_NEWS() {
+			
+	    }
+	  }
+	});
+	```
+
+3. [ store/index.js ] 생성한 FETCH_NEWS 함수에 api 호출 함수 fetchNewsList() 를 적용한다
+	```javascript
+	// store/index.js
+	import { fetchNewsList } from '../api/index.js';
+
+	export const store = new Vuex.Store({
+	  state: {
+	    news: []
+	  },
+	  actions: {
+	    FETCH_NEWS() {
+	      fetchNewsList()
+	        .then( response => console.log(response))
+	        .catch( error => console.log(error))
+	    }
+	  }
+	});
+	```
+
+4. [ NewsView.vue ] FETCH_NEWS 함수를 호출한다.
+	- Vuex 에서 actions 를 호출하려면 dispatch api를 이용해야 한다.
+		- actions 에서 바로 state 로 값을 전달할 수 없다.
+		- **비동기 호출은 무조건 actions 에서 하게 되고 거기서 담아온 정보는 mutations 에서 state로 전달**된다.
+		![5-3-1](./_images/5-3-1.png)<br />
+	- **NewsView.vue 코드를 아래의 코드로 변환.**
+		```html
+		<!-- NewsView.vue -->
+
+		<template>
+		  <div>
+		    <div v-for="user in users">{{ user.title }}</div>
+		  </div>
+		</template>
+
+		<script>
+		export default {
+		  data() {
+		    return {
+		      users: []
+		    }
+		  },
+		  created() {
+		    this.$store.dispatch('FETCH_NEWS');
+		  }
+		}
+		</script>
+		```
+		![5-3-2](./_images/5-3-2.png)<br />
+
+5. [ store/index.js ] mutations 속성을 추가하여 actions로 전달받은 데이터 값을 담는다.
+	- **actions -> state 로 데이터 정보를 전달할 수 없다.**
+
+6. [ store/index.js ] actions 에서 mutations의 값을 받을려면 actions - 함수에 context 인자를 받아야 한다
+	- context.commit 으로 mutations - SET_NEWS를 실행시킨다
+	- [mutations 와 commit 자세히보기](https://github.com/eunhye8767/learn_vue_js_02#75-mutations-%EC%99%80-commit-%ED%98%95%EC%8B%9D-%EC%86%8C%EA%B0%9C)
+	- context.commit 을 할 땐, 함수 실행과 함께 전달받은 response.data를 넘겨준다.
+	```javascript
+	// store/indes.js
+
+	import Vue from 'vue';
+	import Vuex from 'vuex';
+
+	import { fetchNewsList } from '../api/index.js';
+
+	Vue.use(Vuex);
+
+	export const store = new Vuex.Store({
+	  state: {
+	    news: []
+	  },
+	  mutations: {
+	    SET_NEWS() {
+
+	    }
+	  },
+	  actions: {
+	    FETCH_NEWS(context) {
+	      fetchNewsList()
+	        .then( response => {
+	          context.commit('SET_NEWS', response.data);
+	          console.log(response)
+	        })
+	        .catch( error => console.log(error))
+	    }
+	  }
+	});
+	```
+
+7. [ store/index.js ] mutations 안에 함수에서는 첫번째 인자로 무조건 state 인자를 받는다. 따라서 첫번째 인자 state를 적용하고 두번째 인자로는 response.data 값을 받아야 하기 때문에 이름을 news 로 정보를 받는다
+	- state.news => state - news 속성을 의미한다.
+	- state.news = news => news<br />(responese.news의 정보를 news 인자로 받고 그 정보를 state - news로 넘겨준다)
+	```javascript
+	// store/indes.js
+
+	import Vue from 'vue';
+	import Vuex from 'vuex';
+
+	import { fetchNewsList } from '../api/index.js';
+
+	Vue.use(Vuex);
+
+	export const store = new Vuex.Store({
+	  state: {
+	    news: []
+	  },
+	  mutations: {
+	    SET_NEWS(state, news) {
+	      state.news = news
+	    }
+	  },
+	  actions: {
+	    FETCH_NEWS(context) {
+	      fetchNewsList()
+	        .then( response => {
+	          context.commit('SET_NEWS', response.data);
+	          console.log(response)
+	        })
+	        .catch( error => console.log(error))
+	    }
+	  }
+	});
+	```
+
+8. [ 뷰개발자 도구 ] mutations 와 state 속성에 데이터가 전달된 것을 확인할 수 있다<br />
+	![5-3-3](./_images/5-3-3.png)<br />
+
+9. [ NewsView.vue ] 전달받은 state 속성의 값을 화면에 뿌려준다.
+	- Vuex 적용 전
+		- state 값을 불러와서 적용하기 때문에 data - users 는 삭제한다.
+		- <code><div v-for=""></div></code> state 값으로 적용한다
+		```html
+		<template>
+		  <div>
+		    <div v-for="user in users">{{ user.title }}</div>
+		  </div>
+		</template>
+
+		<script>
+		export default {
+		  data() {
+		    return {
+		      users: []
+		    }
+		  },
+		  created() {
+		    this.$store.dispatch('FETCH_NEWS');
+		  }
+		}
+		</script>
+		```
+	- **Vuex 적용 후**
+		```html
+		<template>
+		  <div>
+		    <div v-for="user in this.$store.state.news">{{ user.title }}</div>
+		  </div>
+		</template>
+
+		<script>
+		export default {
+		  created() {
+		    this.$store.dispatch('FETCH_NEWS');
+		  }
+		}
+		</script>
+		```
+
+10. [ Vuex 데이터 흐름 ] API 호출한 데이터값<br />--> actions --> mutations --> state --> NewsView
+	![5-3-4](./_images/5-3-4.png)<br />
+
+#### ※ 참고자료
+- [Vuex Data Flow 자세히보기](https://vuex.vuejs.org/)
