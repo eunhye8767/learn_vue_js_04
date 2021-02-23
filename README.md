@@ -1210,3 +1210,11 @@
 
 #### ※ 참고자료
 - [Vuex Data Flow 자세히보기](https://vuex.vuejs.org/)
+
+<br />
+
+### 5.4. JobsView 와 AskView 실습 안내
+- Jobs API 오류로 Show API 로 변경
+	- (변경전) https://api.hnpwa.com/v0/jobs/1.json
+	- (변경후) https://api.hnpwa.com/v0/show/1.json
+	
