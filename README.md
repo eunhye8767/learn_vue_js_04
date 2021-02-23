@@ -1248,3 +1248,76 @@
 
 #### ※ 참고자료
 - [ES6 Destructuring 설명 글(e북) 자세히보기](https://joshua1988.github.io/es6-online-book/destructuring.html)
+
+<br />
+
+### 5.6. map 헬퍼 함수를 이용한 AskView 풀이
+1. [ store/index.js ]Destructuring(디스트럭처링) 으로 문법 변경
+	```javascript
+	FETCH_ASK({commit}) {
+	  fetchAskList()
+	    .then( ({data})  => {
+	      commit('SET_ASK', data);
+	    })
+	    .catch( error => console.log(error))
+	}
+	```
+
+2. mapGetters 함수를 이용하여 코드 수정
+	```javascript
+	// store/index.js
+	getters: {
+    fetchAsk(state) {
+      return state.ask
+    }
+  },
+	```
+	```html
+	<template>
+	  <div>
+	    <div v-for="item in askItems">{{item.title}}</div>
+	  </div>
+	</template>
+
+	<script>
+	import { mapState, mapGetters } from 'vuex';
+
+	export default {
+	  computed: {
+
+	    // #2 mapGetters
+	    ...mapGetters({
+	      askItems : 'fetchAsk',
+	    })
+
+	    // #1 mapState
+	    // ...mapState({
+	    //   fetchedAsk: state => state.ask
+	    // }),
+	  },
+	  created() {
+	    this.$store.dispatch('FETCH_ASK')
+	  }
+	}
+	</script>
+	```
+	- 또는 mapGetters 를 객체가 아닌 배열로 적용할 수도 있다.
+	```html
+	<template>
+	  <div>
+	    <div v-for="item in fetchAsk">{{item.title}}</div>
+	  </div>
+	</template>
+	```
+	```javascript
+	computed: {
+	  // #2 mapGetters
+	  ...mapGetters([
+	    'fetchAsk',
+	  ])
+	}
+	```
+#### ※ 참고자료
+- [Vue.js 헬퍼 함수 자세히 보기(중급강좌)](https://github.com/eunhye8767/learn_vue_js_02#8-vuex---%ED%97%AC%ED%8D%BC%ED%95%A8%EC%88%98)
+- [Vue.js 중급 강좌 map 헬퍼 함수 강의 링크 자세히보기](https://www.inflearn.com/course/vue-pwa-vue-js-%EC%A4%91%EA%B8%89/lecture/11559?tab=curriculum)
+- [ES6 Spread Operator 설명글(e북) 자세히보기](https://joshua1988.github.io/es6-online-book/spread-operator.html)
