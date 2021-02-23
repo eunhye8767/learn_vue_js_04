@@ -31,11 +31,10 @@ export const store = new Vuex.Store({
         })
         .catch( error => console.log(error))
     },
-    FETCH_JOBS(context) {
+    FETCH_JOBS({commit}) {
       fetchJobsList()
-        .then( response => {
-          context.commit('SET_JOBS', response.data);
-          console.log(response);
+        .then( ({ data }) => {
+          commit('SET_JOBS', data);
         })
         .catch( error => console.log(error))
     },

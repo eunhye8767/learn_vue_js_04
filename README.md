@@ -1217,4 +1217,34 @@
 - Jobs API 오류로 Show API 로 변경
 	- (변경전) https://api.hnpwa.com/v0/jobs/1.json
 	- (변경후) https://api.hnpwa.com/v0/show/1.json
-	
+	<br />
+
+### 5.5. JobsView에 스토어 적용 (실습)
+#### 구조 분해 문법(Destructuring) 적용
+- Destructuring(디스트럭처링)으로 코드 수정
+	- 적용 전
+		```javascript
+		// store/index.js
+		FETCH_JOBS(context) {
+		  fetchJobsList()
+		    .then( response => {
+		      context.commit('SET_JOBS', response.data);
+		      console.log(response);
+		    })
+		    .catch( error => console.log(error))
+		},
+		```
+	- **적용 후**
+		```javascript
+		// store/index.js
+		FETCH_JOBS({commit}) {
+		  fetchJobsList()
+		    .then( ({ data }) => {
+		      commit('SET_JOBS', data);
+		    })
+		    .catch( error => console.log(error))
+		},
+		```
+
+#### ※ 참고자료
+- [ES6 Destructuring 설명 글(e북) 자세히보기](https://joshua1988.github.io/es6-online-book/destructuring.html)
