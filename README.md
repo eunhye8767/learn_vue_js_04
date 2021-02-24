@@ -1459,3 +1459,106 @@
 <br />
 <hr />
 <br />
+
+## 6. 라우터 실전
+### 6.1. 동적 라우트 매칭 원리 및 적용
+1. News 페이지에서 user 이름 클릭 시 해당 user 정보 페이지로 이동하는 기능을 구현하려고 한다.<br />(이런 기능을 동적 라우트 매칭(Dynamic Route matching))
+2. views 폴더에 UserView.vue 컴포넌트 파일을 새로 생성
+3. [ routes/index.js ] UserView.vue 를 import 한다
+	```javascript
+	// routes/index.js
+	import UserView from '../views/UserView.vue'
+
+	export const router = new VueRouter({
+	  mode: 'history',
+	  routes: [
+	    {
+	      path: '/user',
+	      component: UserView,
+	    },
+	  ]
+	});
+	```
+4. News 페이지에서 user 이름 클릭 시, 해당 user 정보 페이지로 이동하려면<br />[ routes/index.js ] path에 경로를 설정해준다.
+	- /:id 변수를 적용한다.
+	```javascript
+	// routes/index.js
+	import UserView from '../views/UserView.vue'
+
+	export const router = new VueRouter({
+	  mode: 'history',
+	  routes: [
+	    {
+	      path: '/user/:id',
+	      component: UserView,
+	    },
+	  ]
+	});
+	```
+
+5. [ NewsView.vue ] router-link 태그를 이용하여 user 정보 페이지로 이동한다.
+	```html
+	<!-- NewsView.vue  -->
+	<template>
+	  <div>
+	    <p v-for="item in this.$store.state.news">
+	      <a v-bind:href="item.url">
+	        {{ item.title}}
+	      </a>
+	      <small>
+	        {{ item.time_ago}} by 
+	        <router-link to="/user">{{ item.user }}</router-link>
+	        </small>
+	    </p>
+	  </div>
+	</template>
+	```
+
+6. user 이름을 클릭했을 때, 해당 user 정보 페이지로 이동을 하려면 어떠한 값을 적용해야 하는데 그 값은 user API를 확인한 후 해당 값을 적용하면 된다.
+	- [API - User 정보 확인하는 방법](https://github.com/tastejs/hacker-news-pwas/blob/master/docs/api.md#users) 
+	- [API - User 정보](https://api.hnpwa.com/v0/user/davideast.json)를 보면 user 네임을 그대로 적용하면 되는 것으로 확인할 수 있다<br />
+		![6-1-1](./_images/6-1-1.png)<br />
+	- 따라서, router-link 태그에 /user 주소 뒤에 user 네임을 적용하면 된다<br />
+		![6-1-2](./_images/6-1-2.png)<br />
+		```html
+		<template>
+		  <div>
+		    <p v-for="item in this.$store.state.news">
+		      <a v-bind:href="item.url">
+		        {{ item.title}}
+		      </a>
+		      <small>
+		        {{ item.time_ago}} by 
+		        <router-link v-bind:to="'/user/' + item.user">{{ item.user }}</router-link>
+		        </small>
+		    </p>
+		  </div>
+		</template>
+		```
+7. ES6 리터럴 문법(템플릿 스트링)을 적용하여 router-link v-bind 코드를 수정한다
+	```html
+	<template>
+	  <div>
+	    <p v-for="item in this.$store.state.news">
+	      <a v-bind:href="item.url">
+	        {{ item.title}}
+	      </a>
+	      <small>
+	        {{ item.time_ago}} by 
+	        <router-link v-bind:to="`/user/${item.user}`">{{ item.user }}</router-link>
+	        </small>
+	    </p>
+	  </div>
+	</template>
+	```
+
+8. 로컬 서버 - 브라우저에서 확인하면, 클릭한 user 이름에 따라 바뀌는 것을 확인할 수 있다<br />
+	![6-1-3](./_images/6-1-3.png)<br />
+
+9. 로컬 서버 - 브라우저에서 보면,<br />routes/index.js 파일에서 UserView의 컴포넌트 path 를 /user/:id 로 지정하였기 때문에<br />[ 뷰 개발자 도구] 에서 해당 컴포넌트 클릭 시, params - id 값을 확인할 수 있다.<br />
+	![6-1-4](./_images/6-1-4.png)<br />
+
+#### ※  참고자료
+- [Dynamic Route Matching 공식 문서 자세히보기](https://router.vuejs.org/guide/essentials/dynamic-matching.html)
+- [해커 뉴스 API 문서 주소 자세히보기](https://github.com/tastejs/hacker-news-pwas/blob/master/docs/api.md)
+- [ES6 템플릿 리터럴 설명 글(e북) 자세히보기](https://joshua1988.github.io/es6-online-book/template-literal.html)
