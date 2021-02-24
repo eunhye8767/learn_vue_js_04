@@ -1562,3 +1562,130 @@
 - [Dynamic Route Matching 공식 문서 자세히보기](https://router.vuejs.org/guide/essentials/dynamic-matching.html)
 - [해커 뉴스 API 문서 주소 자세히보기](https://github.com/tastejs/hacker-news-pwas/blob/master/docs/api.md)
 - [ES6 템플릿 리터럴 설명 글(e북) 자세히보기](https://joshua1988.github.io/es6-online-book/template-literal.html)
+
+<br />
+
+### 6.2. 라우터 params을 이용한 User 상세 페이지 구현
+1. [ UserView.vue ] 콘솔 로그에 route 정보를 출력해본다
+	- User 정보 페이지에서 어떤 정보들을 출력할 수 있는 지 확인할 수 가 있다.
+	```javascript
+	created() {
+	  console.log(this.$route);
+
+		// user의 id(user name)값
+	  console.log(this.$route.params.id);
+	}
+	```
+	![6-2-1](./_images/6-2-1.png)<br />
+
+2. [ UserView.vue ] 변수 userName 을 생성한다.
+	```javascript
+	// UserView.vue
+	created() {
+	  const userName = this.$route.params.id;
+	}
+	```
+
+3. api/index.js에 user 정보 API 함수를 생성한다
+	- 인자로 username 정보를 받는다.
+	- [API - User 정보 확인하는 방법](https://github.com/tastejs/hacker-news-pwas/blob/master/docs/api.md#users)을 보면 url에 username이 주소에 들어가기 때문에 axios.get 으로 호출하는 .json에 해당 username을 적용한다.
+	- [예시, username(davideast) API - User API 페이지 주소](https://api.hnpwa.com/v0/user/davideast.json)
+	```javascript
+	// api/index.js
+	function fetchUserInfo(username) {
+	  return axios.get(`${config.baseUrl}user/${username}.json`);
+	}
+
+	export {
+	  fetchUserInfo
+	}
+	```
+
+4. store/actions.js에 fetchUserInfo 함수를 적용한다.
+	```javascript
+	// store/actions.js
+	import { fetchUserInfo } from '../api/index.js';
+
+	FETCH_USER({commit}) {
+	  fetchUserInfo()
+	    .then()
+	    .catch()
+	}
+	```
+
+5. [ UserView.vue ] dispatch 로 actions - FETCH_USER 호출한다
+	- userName을 인자로 전달한다
+	- dispatch로 actions를 호출할 때, 인자는 하나만 전달되기 때문에 여러 개를 전달할 경우 객체로 감싸서 전달한다
+		- <code>this.$store.dispatch('FETCH_USER', {userName, userName2});</code>
+	```javascript
+	export default {
+	  created() {
+	    const userName = this.$route.params.id;
+	    this.$store.dispatch('FETCH_USER', userName);
+	  }
+	}
+	```
+
+6. actions.js 에서 SET_USER 커밋하여 정보를 전달한다.
+	- state 에 user 정보를 담을 user 빈객체 속성을 추가한다
+	```javascript
+	// store/index.js
+	state: {
+	  user: {},
+	},
+
+	// store/mutations.js
+	SET_USER(state, user) {
+	  state.user = user
+	}
+
+	// store/actions.js
+	FETCH_USER({commit}, name) {
+	  fetchUserInfo(name)
+	    .then( ({ data }) => {
+	      commit('SET_USER', data)
+	    } )
+	    .catch( error => console.log(error))
+	}
+	```
+
+7. [ 뷰 개발자도구 ] user: Object 에 user의 정보가 담긴 것을 확인할 수 있다.<br />
+	![6-2-2](./_images/6-2-2.png)<br />
+
+8. user의 정보를 화면에 출력한다.
+	```html
+	<!-- UserView.vue -->
+	<template>
+	  <div>
+	    <p>name : {{ this.$store.state.user.id }}</p>
+	    <p>karma : {{ this.$store.state.user.karma }}</p>
+	    <p>created: {{ this.$store.state.user.created }}</p>
+	  </div>
+	</template>
+	```
+	![6-2-3](./_images/6-2-3.png)<br />
+
+9. template 안에 태그는 **최대한 정돈된 형태로 코드를 작성**해야 한다.
+	```html
+	<template>
+	  <div>
+	    <p>name : {{ userInfo.id }}</p>
+	    <p>karma : {{ userInfo.karma }}</p>
+	    <p>created: {{ userInfo.created }}</p>
+	  </div>
+	</template>
+	
+	<script>
+	export default {
+	  computed: {
+	    userInfo() {
+	      return this.$store.state.user;
+	    }
+	  },
+	  created() {
+	    const userName = this.$route.params.id;
+	    this.$store.dispatch('FETCH_USER', userName);
+	  }
+	}
+	</script>
+	```
