@@ -1,10 +1,13 @@
 <template>
   <div>
     <p v-for="item in askItems">
-      <a v-bind:href="item.url">
+      <router-link v-bind:to="`/ask/${item.url}`">{{ item.title}}</router-link>
+      <!-- <a v-bind:href="item.url">
         {{ item.title}}
-      </a>
-      <small>{{ item.time_ago}} by {{ item.user }}</small>
+      </a> -->
+      <small>
+        {{ item.time_ago}} by {{ item.user }}
+        </small>
     </p>
   </div>
 </template>

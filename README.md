@@ -1674,7 +1674,7 @@
 	    <p>created: {{ userInfo.created }}</p>
 	  </div>
 	</template>
-	
+
 	<script>
 	export default {
 	  computed: {
@@ -1688,4 +1688,23 @@
 	  }
 	}
 	</script>
+	```
+	<br />
+
+### 6.3. 질문 상세 페이지 구현 실습
+- [API - 질문 상세 :: item번호 참고](https://github.com/tastejs/hacker-news-pwas/blob/master/docs/api.md#individual-items)
+#### 6.3.1 실습순서
+1. ItemView 생성
+2. 라우터에 ItemView로 갈 수 있는 라우터 정보를 등록
+	```javascript
+	{
+		path: '',
+		cmponent: ,
+	}
+	```
+3. 해당 페이지 컴포넌트로 이동했을 때 받아온 params(id)를 이용해서 페이지에 데이터를 표시
+	```javascript
+	created() {
+		this.$store.dispatch('')
+	}
 	```
