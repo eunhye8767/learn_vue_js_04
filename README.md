@@ -1402,3 +1402,60 @@
 		  actions
 		})
 		```
+
+<br />
+<hr />
+<br />
+
+# 중간 정리 및 스타일링
+- **main.js**
+	- router, store 를 import
+	- <code>new Vue({})</code> vue 인스턴스에 router, store 적용하여 현재 프로젝트에서 사용중인 것을 한 눈에 알 수 있다.
+
+- **routes/index.js(router)**
+	- **mode: 'history'** : URL에서 #(해쉬) 제거
+	- **routes** : 각각의 url에 대한 정보 적용
+	- **routes - redirect** : 루트 접속 시, 지정한 폴더로 자동 연결
+	- **routes에 적용된 코드가 많아지면 모듈화 작업을 한다**
+
+- **store/index.js**
+	- mutations, actions 를 모듈화하여 적용
+	- API를 연결하여 actions에서 state 값에 접근 했다.
+	- API는 Api 폴더를 생성하여 별도로 분리하여 관리 (유지보수 용이)
+
+- **현재까지 작업한 폴더 구조를 항시, 필히!! 참고**(Vuex 권고 가이드)
+
+### ★☆ 중간 정리 == 코드 정리 ★☆
+- **NewsView.vue**
+	- item.title 클릭했을 때, item.url 로 연결
+	- [ Vue 개발자 도구 ] mutations의 값을 보면서 title, url 등 적용할 수 있다<br />
+		![0-1-1](./_images/0-1-1.png)<br />
+		```html
+		<!-- NewsView.vue -->
+		<template>
+		  <div>
+		    <p v-for="item in this.$store.state.news">
+		      <a v-bind:href="item.url">
+		        {{ item.title}}
+		      </a>
+		      <small>{{ item.time_ago}} by {{ item.user }}</small>
+		    </p>
+		  </div>
+		</template>
+		```
+	- JobsView, AskView 도 동일한 방식으로 수정
+	- v-bind:href 경우, 축약해서 :href 로 쓸 수 있다.
+		```html
+		<!-- JobsView.vue -->
+		<template>
+		  <div>
+		    <p v-for="job in this.$store.state.jobs">
+		      <a :href="job.url">{{ job.title}}</a>
+		      <small>{{ job.time_ago}}, {{ job.domain }}</small>
+		    </p>
+		  </div>
+		</template>
+		```
+<br />
+<hr />
+<br />
