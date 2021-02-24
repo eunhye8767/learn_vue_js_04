@@ -1321,3 +1321,84 @@
 - [Vue.js 헬퍼 함수 자세히 보기(중급강좌)](https://github.com/eunhye8767/learn_vue_js_02#8-vuex---%ED%97%AC%ED%8D%BC%ED%95%A8%EC%88%98)
 - [Vue.js 중급 강좌 map 헬퍼 함수 강의 링크 자세히보기](https://www.inflearn.com/course/vue-pwa-vue-js-%EC%A4%91%EA%B8%89/lecture/11559?tab=curriculum)
 - [ES6 Spread Operator 설명글(e북) 자세히보기](https://joshua1988.github.io/es6-online-book/spread-operator.html)
+
+<br />
+
+### 5.7. 스토어 속성 모듈화
+1. [ store/index.js ] mutations, actions 속성을 모듈화 한다.
+	- store 폴더에 개별 .js 페이지를 생성한다<br />
+		![5-7-1](./_images/5-7-1.png)<br />
+	- state, getters 경우 내용이 많지 않아 모듈화 작업 생략
+
+2. [ store/index.js] mutations 속성에 적용된 내용을 store/mutations.js에 적용한다.
+	- **store/mutations.js**
+		```javascript
+		// mutations.js
+
+		export default {
+		  SET_NEWS(state, news) {
+		    state.news = news
+		  },
+		  SET_JOBS(state, jobs) {
+		    state.jobs = jobs
+		  },
+		  SET_ASK(state, ask) {
+		    state.ask = ask
+		  }
+		}
+		```
+	- **store/index.js**
+		- export const store 영역에 *mutations: mutations 로 적용할 경우, key 와 value 값이 동일하기 때문에 축약이 가능*하다.
+		```javascript
+		// index.js
+
+		import mutations from './mutations.js'
+
+		export const store = new Vuex.Store({
+		  mutations
+		})
+		```
+
+3. [ store/index.js] actions 속성에 적용된 내용을 store/actions.js에 적용한다.
+	- **store/actions.js**
+		- **actions 경우, index.js 파일에 적용되었던 API 관련 import 문구도 같이 적용**을 해야 한다.
+		```javascript
+		// actions.js
+
+		import { fetchAskList, fetchJobsList, fetchNewsList } from '../api/index.js';
+		
+		export default {
+		  FETCH_NEWS(context) {
+		    fetchNewsList()
+		      .then( response => {
+		        context.commit('SET_NEWS', response.data);
+		        console.log(response)
+		      })
+		      .catch( error => console.log(error))
+		  },
+		  FETCH_JOBS({commit}) {
+		    fetchJobsList()
+		      .then( ({ data }) => {
+		        commit('SET_JOBS', data);
+		      })
+		      .catch( error => console.log(error))
+		  },
+		  FETCH_ASK({commit}) {
+		    fetchAskList()
+		      .then( ({data})  => {
+		        commit('SET_ASK', data);
+		      })
+		      .catch( error => console.log(error))
+		  }
+		}
+		```
+	- **store/index.js**
+		```javascript
+		// index.js
+
+		import actions from './actions.js';
+
+		export const store = new Vuex.Store({
+		  actions
+		})
+		```
