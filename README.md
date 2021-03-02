@@ -1720,3 +1720,46 @@
 		<router-link v-bind:to="`/item/${item.id}`">{{ item.title}}</router-link>
 		```
 		
+	<br />
+
+### 6.5. 질문 상세 페이지 스타일링 및 v-html 디렉티브 사용법 소개
+1. ...mapGetters 함수를 이용하여 코드 수정
+	```javascript
+	// store/index.js
+	getters: {
+	  fetchedItem(state) {
+	    return state.item
+	  },
+	},
+
+	// ItemView.vue
+	import { mapGetters } from 'vuex';
+	
+	export default {
+	  computed: {
+	    ...mapGetters(['fetchedItem']),
+	  },
+	}
+	```
+	![6-5-1](./_images/6-5-1.png)<br />
+
+2. **v-html : html 형식으로 불러와야 할 때**
+	- 아래 이미지처럼, html 형식으로 된 내용을 불러와야 할 때 사용하는 v-html<br />
+		![6-5-2](./_images/6-5-2.png)<br />
+	- v-html 디렉티브를 이용해 불러온다
+		```html
+		<!-- ItemView.vue -->
+		<template>
+		  <div>
+		    <section>
+		      <div v-html="fetchedItem.content"></div>
+		    </section>
+		  </div>
+		</template>
+		```
+		![6-5-3](./_images/6-5-3.png)<br />
+
+#### ※ 참고자료
+- [Font awesome 사이트 자세히보기](https://fontawesome.com/)
+- [v-html API 문서 자세히보기](https://vuejs.org/v2/api/#v-html)
+- [v-html과 데이터 바인딩 차이점 문서 자세히보기](https://vuejs.org/v2/guide/syntax.html#Raw-HTML)
