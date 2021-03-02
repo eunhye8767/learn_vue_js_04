@@ -21,7 +21,6 @@ export default {
 }
 .header a {
   color: #fff;
-  text-decoration: none;
 }
 .header a:not(:first-of-type) {
   padding-left: 15px;
