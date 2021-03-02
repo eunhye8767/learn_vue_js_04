@@ -924,7 +924,7 @@
 - [Vuex 자세히 보기](https://github.com/eunhye8767/learn_vue_js_02#6-vuex)
 
 #### 5.1.1. Vuex 설치
-1. <code>npm i vues</code> 명령어로 vuex 를 설치한다
+1. <code>npm i vuex</code> 명령어로 vuex 를 설치한다
 2. 설치가 완료되면 프로젝트 루트폴더의 package.json - dependencies 위치에 vuex가 추가된 것을 확인할 수 있다.<br />
 	![5-1-2](./_images/5-1-2.png)<br />
 	<br />
@@ -1698,13 +1698,25 @@
 2. 라우터에 ItemView로 갈 수 있는 라우터 정보를 등록
 	```javascript
 	{
-		path: '',
-		cmponent: ,
+	  path: '',
+	  cmponent: ,
 	}
 	```
 3. 해당 페이지 컴포넌트로 이동했을 때 받아온 params(id)를 이용해서 페이지에 데이터를 표시
 	```javascript
 	created() {
-		this.$store.dispatch('')
+	  this.$store.dispatch('')
 	}
 	```
+<br />
+
+### 6.4. 질문 상세 페이지 실습 풀이 및 오류 디버깅
+- [ routes/index.js ] ItemView의 path: '/item/:id' 로 적용하게 되면 오류가 난다.
+	- [ 뷰 개발자도구 ] 에서 ask 부분을 보면 url:"item?id="18776224" 로 보여진다
+	- routes에 적용한 /item/:id 표기방법과 맞지 않기 때문에 오류 발생
+		![6-4-1](./_images/6-4-1.png)<br />
+	- routes에 적용한 표기와 맞게 AskView.vue 에서 router-link 태그를 수정한다.
+		```html
+		<router-link v-bind:to="`/item/${item.id}`">{{ item.title}}</router-link>
+		```
+		

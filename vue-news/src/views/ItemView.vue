@@ -1,8 +1,9 @@
 <template>
   <div>
-    <p>id : {{ itemInfo.id }}</p>
     <p>title : {{ itemInfo.title }}</p>
-    <p>user : {{ itemInfo.user }}</p>
+    <div>
+      {{ itemInfo.content }}
+    </div>
   </div>
 </template>
 
@@ -14,9 +15,9 @@ export default {
     }
   },
   created() {
-    const itemInfo = this.$route.query.id;
-    console.log(itemInfo);
-    this.$store.dispatch('FETCH_ITEM', itemInfo);
+    const itemId = this.$route.params.id;
+    console.log(itemId);
+    this.$store.dispatch('FETCH_ITEM', itemId);
   }
 }
 </script>
