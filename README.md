@@ -1825,3 +1825,64 @@
 	![7-2-1](./_images/7-2-1.png)<br />
 <br />
 
+### 7.3. 공통 컴포넌트 ListItem 제작 및 실습 안내
+1. AskView, JobsView, NewsView 뷰 컴포넌트 페이지에 "ul > li " 영역이 공통으로 보여진다. 해당 부분을 ListItem.vue 파일을 생성하여 공통 컴포넌트로 사용하려고 한다.
+
+2. components 폴더에 ListItem.vue 파일을 생성한다.
+
+3. 현재 3종 페이지 AskView, JobsView, NewsView 에 동일한 css가 적용되어 있는데 해당 css 값을 ListItem.vue에 적용한다.
+	```css
+	/*ListItem.vue*/
+	.news-list {
+	  margin: 0;
+	  padding: 0;
+	  list-style: none;
+	}
+	.post {
+	  display: flex;
+	  align-items: center;
+	  border-bottom: 1px solid #eee;
+	}
+	.points {
+	  width: 80px;
+	  height: 60px;
+	  display: flex;
+	  align-items: center;
+	  justify-content: center;
+	  color: #42b883;
+	}
+	.news-title {
+	  margin: 0;
+	}
+	.link-text {
+	  color: #828282
+	}
+	```
+
+4. NewsView.vue 에 적용된 "template", "script" 영역을 그대로 복사하여 ListItem.vue 에 붙여넣기 한다.
+	- 붙여넣기 한 후에 해당 해당 페이지에 맞게 코드 수정 예정
+
+5. NewsView.vue 의 전체 내용을 모두 ListItem.vue 에 적용한 후 NewsView.vue 를 아래와 같이 수정한다
+	- import로 ListItem 컴포넌트를 불러온다
+	```html
+	<!-- NewsView.vue -->
+	<template>
+	  <list-item></list-item>
+	</template>
+
+	<script>
+	import ListItem from '../components/ListItem.vue'
+	export default {
+	  components: {
+	    ListItem,
+	  }
+	}
+	</script>
+
+	<style>
+
+	</style>
+	```
+
+6. [ 뷰 개발자 도구 ] ListItem 컴포넌트가 적용된 것을 확인할 수 있다<br />
+	![7-3-1](./_images/7-3-1.png)<br />
