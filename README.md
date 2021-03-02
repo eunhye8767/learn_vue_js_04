@@ -1763,3 +1763,50 @@
 - [Font awesome 사이트 자세히보기](https://fontawesome.com/)
 - [v-html API 문서 자세히보기](https://vuejs.org/v2/api/#v-html)
 - [v-html과 데이터 바인딩 차이점 문서 자세히보기](https://vuejs.org/v2/guide/syntax.html#Raw-HTML)
+<br />
+
+### 6.6. 라우터 트랜지션
+1. [ App.vue ] router-view 태그를 transition 태그로 감싼다
+	- [라우터 트랜지션 문서 자세히보기](https://router.vuejs.org/guide/advanced/transitions.html#per-route-transition)
+	- [All transition APIs](https://vuejs.org/v2/guide/transitions.html)
+	- [뷰 트랜지션 문서 자세히보기](https://vuejs.org/v2/guide/transitions.html)
+	```HTML
+	<!-- 예제 -->
+	<transition>
+	  <router-view></router-view>
+	</transition>
+
+	<!-- App.vue -->
+	<template>
+	  <div id="app">
+	    <transition>
+	      <router-view></router-view>  
+	    </transition>
+	  </div>
+	</template>
+	```
+
+2. [All transition APIs](https://vuejs.org/v2/guide/transitions.html)을 참고하여 테스트로 transition을 적용해본다.
+	- transition 태그에 name 값을 부여한다. <code>name="page"</code>
+		```HTML
+		<!-- App.vue -->
+		<template>
+		  <div id="app">
+		    <transition name="page">
+		      <router-view></router-view>  
+		    </transition>
+		  </div>
+		</template>
+		```
+	- transition 클래스를 적용한다.
+		- name 값에 page를 주었기 때문에 page-enter-active, page-leave-to 로 적용한다
+		```css
+		.page-enter-active, .page-leave-active {
+		  transition: opacity .5s;
+		}
+		.page-enter, .page-leave-to /* .page-leave-active below version 2.1.8 */ {
+		  opacity: 0;
+		}
+		```
+		![6-6-1](./_images/6-6-1.png)<br />
+	- [중급강좌 - 트렌지션 소개 및 구현 자세히보기](https://github.com/eunhye8767/learn_vue_js_02#42-%ED%8A%B8%EB%A0%8C%EC%A7%80%EC%85%98-%EC%86%8C%EA%B0%9C-%EB%B0%8F-%EA%B5%AC%ED%98%84)
