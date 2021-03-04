@@ -12,7 +12,7 @@ function fetchNewsList() {
 };
 function fetchJobsList() {
   // https://api.hnpwa.com/v0/jobs/1.json 서버 에러로 show api 활용
-  return axios.get(`${config.baseUrl}show/1.json`);
+  return axios.get(`${config.baseUrl}jobs/1.json`);
 };
 function fetchAskList() {
   return axios.get(`${config.baseUrl}ask/1.json`);

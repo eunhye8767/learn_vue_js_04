@@ -1960,3 +1960,47 @@
 		```
 6. 이제, 페이지별로 갖고 온 데이터를 화면에 뿌려주는 작업을 하면 된다<br />
 	![7-4-3](./_images/7-4-3.png)<br />
+	<br />
+
+### 7.5. 공통 컴포넌트 구현(2) - computed 속성
+1. [ components/ListItem.vue ] v-for 디렉티브에서 url 페이지 조건에 따라 데이터를 화면에 출력하려고 한다.
+	```html
+	<!-- 예시 news -->
+	<li v-for="item in this.$store.state.news">
+	```
+2. v-for 디렉티브에서 this.$store.state.~~ 부분을 listItems 로 적용하고 computed 속성에 listItems 속성을 추가한다
+	```html
+	<template>
+	  <div>
+	    <ul class="news-list">
+	      <li v-for="item in listItems" class="post">
+	      </li>
+	    </ul>
+	  </div>
+	</template>
+	```
+	```javascript
+	export default {
+	  computed: {
+	    listItems() {
+			
+	    }
+	  },
+	}
+	```
+3. ListItem.vue - computed 코드를 아래와 같이 적용한다
+	```javascript
+	computed: {
+	  listItems() {
+	    const name = this.$route.name;
+	    if ( name === 'news') {
+	      return this.$store.state.news;
+	    } else if ( name === "ask") {
+	      return this.$store.state.ask;
+	    } else if ( name === "jobs") {
+	      return this.$store.state.jobs;
+	    }
+	  }
+	},
+	```
+4. JobsView.vue 파일도 동일하게 수정을 한다
