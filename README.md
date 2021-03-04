@@ -1886,3 +1886,77 @@
 
 6. [ 뷰 개발자 도구 ] ListItem 컴포넌트가 적용된 것을 확인할 수 있다<br />
 	![7-3-1](./_images/7-3-1.png)<br />
+
+<br />
+
+### 7.4. 공통 컴포넌트 구현(1) - 페이지별 데이터 분기
+1. [ components/ListItem.vue ] 파일에서 페이지별 조건을 준 후, 해당 컴포넌트 페이지에 맞게 데이터를 출력해야 한다.
+2. [ components/ListItem.vue ] created 시, route 콘솔로그를 뿌려주면 해당 URL에 맞게 path 가 변경됨을 알 수 있다.
+	- 데이터 분기 조건 : [ this.$route.path === '/news' ]
+	- 본 수업에선 위 조건이 아닌 다른 방식으로 조건 적용 예정
+	```javascript
+	// ListItem.vue
+	export default {
+	  created() {
+	    console.log(this.$route)
+	  }
+	}
+	```
+	![7-4-1](./_images/7-4-1.png)<br />
+3. [ routes/index.js ] routes 속성에서 path, component 외에 name 값도 적용한다
+	```javascript
+	routes: [
+	  {
+	    path: '/news',
+	    name: 'news',
+	    component: NewsView,
+	  },
+	  {
+	    path: '/ask',
+	    name: 'ask',
+	    component: AskView,
+	  },
+	  {
+	    path: '/jobs',
+	    name: 'jobs',
+	    component: JobsView,
+	  },
+	}
+	```
+4. 콘솔로그를 확인해보면 name 값이 적용된 것을 알 수 있다<br />
+	![7-4-2](./_images/7-4-2.png)<br />
+
+5. [ components/ListItem.vue ] 페이지별 조건을 주어 데이터를 화면에 뿌려준다
+	- route의 name을 변수에 담아 if문을 만든다
+	- 각 페이지별 달랐던 created() 속성 값을 if문 조건에 맞게 값을 적용한다
+	```javascript
+	export default {
+	  created() {
+	    const name = this.$route.name;
+			const actionName = this.$store.dispatch();
+	    if ( name === 'news') {
+	      this.$store.dispatch('FETCH_NEWS');
+	    } else if ( name === "ask") {
+	      this.$store.dispatch('FETCH_ASK')
+	    } else if ( name === "jobs") {
+	      this.$store.dispatch('FETCH_JOBS')
+	    }
+	  }
+	}
+	```
+	- 코드를 보면 this.$store.dispatch 문구도 반복적으로 보여지는데, 해당 문구도 변수로 만들어 사용할 수 있다
+		```javascript
+		const name = this.$route.name;
+		const actionName = (name) => {
+		  this.$store.dispatch(name);
+		};
+		if ( name === 'news') {
+		  actionName('FETCH_NEWS');
+		} else if ( name === "ask") {
+		  actionName('FETCH_ASK');
+		} else if ( name === "jobs") {
+		  actionName('FETCH_JOBS');
+		}
+		```
+6. 이제, 페이지별로 갖고 온 데이터를 화면에 뿌려주는 작업을 하면 된다<br />
+	![7-4-3](./_images/7-4-3.png)<br />
