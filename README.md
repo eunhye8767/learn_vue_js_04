@@ -2004,3 +2004,55 @@
 	},
 	```
 4. JobsView.vue 파일도 동일하게 수정을 한다
+<br />
+
+### 7.6. 공통 컴포넌트 구현(3) - template 속성과 v-if 디렉티브 활용 1
+1. template 영역안에 페이지별 분기 처리를 해줘야 한다
+	- AskView 경우, 타이틀 클릭 시 route-link 로 페이지 이동이 된다.
+	- 특정 조건을 주어 페이지에 따라 적용하려고 한다
+2. template 태그와 v-if 디렉티브를 이용하여 적용을 하려고 한다
+	- v-if 조건이 맞으면 해당 template 영역이 보여지고 맞지 않으면 v-else template 속성이 보여진다.
+	```html
+	<div>
+	  <p>
+			<template v-if=""></template>
+			<template v-else></template>
+	  </p>
+	</div>
+	```
+<br />
+
+### 7.7. 공통 컴포넌트 구현(4) - template 속성과 v-if 디렉티브 활용 2
+1. NewsView, AskView, JobsView 를 보면 NewsView와 JobsView 는 domain 이 있어서 title을 클릭하면 해당 도메인의 url로 이동이 된다<br />
+	![7-7-1](./_images/7-7-1.png)<br />
+2. v-if 디렉티브의 조건을 item.domain 유무로 적용한다
+	```html
+	<!-- ListItem.vue -->
+	<p class="news-title">
+	  <template v-if="item.domain">
+	    <a v-bind:href="item.url">
+	      {{ item.title}}
+	    </a>
+	  </template>
+	  <template v-else>
+	    <router-link v-bind:to="`/item/${item.id}`">
+	      {{ item.title}}
+	    </router-link>
+	  </template>
+	</p>
+	```
+3. JobsView 경우, User(사용자)가 아닌 site(domain)가 나와야 한다
+	- router-link 태그에 v-if 로 직접 조건을 걸어준다
+	```html
+	<small class="link-text">
+	  {{ item.time_ago}} by 
+	  <router-link 
+	    v-if="item.user"
+	    v-bind:to="`/user/${item.user}`" class="link-text">
+	    {{ item.user }}
+	  </router-link>  
+	  <a :href="item.url" v-else target="_blank">
+	    {{ item.domain }}
+	  </a>
+	</small>
+	```
