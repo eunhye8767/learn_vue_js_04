@@ -2056,3 +2056,88 @@
 	  </a>
 	</small>
 	```
+
+<br />
+<br />
+<br />
+
+## 8. 리팩토링 2 - 사용자 프로필 컴포넌트 공통화
+### 8.1. 사용자 프로필 컴포넌트 소개 및 등록
+1. components/UserProfile.vue 파일을 새로 생성한다.
+2. UserProfile.vue 코드를 아래와 같이 작성한다.
+	```html
+	<!-- UserProfile.vue -->
+	<template>
+	  <div>
+	    <div class="user-container">
+	        <div>
+	          <i class="fas fa-user"></i>
+	        </div>
+	        <div class="user-description">
+	          <!-- <router-link :to="`/user/${fetchedItem.user}`">
+	            {{ fetchedItem.user }}
+	          </router-link>
+	          <div class="time">
+	            {{ fetchedItem.time_ago }}
+	          </div> -->
+	        </div>
+	      </div>
+	  </div>
+	</template>
+
+	<script>
+	export default {
+
+	}
+	</script>
+
+	<style scoped>
+	.user-container { 
+	  display: flex;
+	  align-items: center;
+	  padding: 0.5rem;
+	}
+	.fa-user {
+	  font-size: 2.5rem;
+	}
+	.user-description {
+	  padding-left: 8px;
+	}
+	.time {
+	  font-size: 0.7rem;
+	}
+	</style>	
+	```
+3. UserView.vue 에서 UserProfile.vue 를 import 한다
+	- 기존 UserView에 적용되었던 id와 krama, created 내용을 UserProfile에 적용하려고 한다.
+	```html
+	<!-- UserView.vue -->
+	<template>
+	  <div>
+	    <user-profile></user-profile>
+	    <!-- <p>name : {{ userInfo.id }}</p>
+	    <p>karma : {{ userInfo.karma }}</p>
+	    <p>created: {{ userInfo.created }}</p> -->
+	  </div>
+	</template>
+
+	<script>
+	import UserProfile from '../components/UserProfile.vue'
+	export default {
+	  components: {
+	    UserProfile,
+	  },
+	  // computed: {
+	  //   userInfo() {
+	  //     return this.$store.state.user;
+	  //   }
+	  // },
+	  // created() {
+	  //   const userName = this.$route.params.id;
+	  //   this.$store.dispatch('FETCH_USER', userName);
+	  // }
+	}
+	</script>	
+	```
+	![8-1-1](./_images/8-1-1.png)<br />
+	<br />
