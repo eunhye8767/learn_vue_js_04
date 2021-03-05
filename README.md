@@ -2063,8 +2063,8 @@
 
 ## 8. 리팩토링 2 - 사용자 프로필 컴포넌트 공통화
 ### 8.1. 사용자 프로필 컴포넌트 소개 및 등록
-1. components/UserProfile.vue 파일을 새로 생성한다.
-2. UserProfile.vue 코드를 아래와 같이 작성한다.
+1. [ components/UserProfile.vue ] 파일을 새로 생성한다.
+2. [ UserProfile.vue ] 코드를 아래와 같이 작성한다.
 	```html
 	<!-- UserProfile.vue -->
 	<template>
@@ -2108,7 +2108,7 @@
 	}
 	</style>	
 	```
-3. UserView.vue 에서 UserProfile.vue 를 import 한다
+3. [ UserView.vue ] UserProfile.vue 를 import 한다
 	- 기존 UserView에 적용되었던 id와 krama, created 내용을 UserProfile에 적용하려고 한다.
 	```html
 	<!-- UserView.vue -->
@@ -2141,3 +2141,37 @@
 	```
 	![8-1-1](./_images/8-1-1.png)<br />
 	<br />
+
+### 8.2. 사용자 컴포넌트 데이터 흐름 처리 1
+1. [ UserView.vue ] created() 시 dispatch로 'FETCH_USER' 실행되어 state - user에 내용이 담겨 있다.<br />
+	![8-2-1](./_images/8-2-1.png)<br />
+2. [ UserView.vue ] computed에 등록된 userInfo 속성을 삭제하고 UserProfile.vue 에 적용한다.
+	```javascript
+	computed: {
+	  userInfo() {
+	    return this.$store.state.user;
+	  }
+	},
+	```
+3. [ UserProfile.vue ] template 영역의 코드를 아래와 같이 수정한다
+	- fetchedItem -> userInfo 로 변경한다<br />
+		![8-2-2](./_images/8-2-2.png)<br />
+	```html
+	<template>
+	  <div>
+	    <div class="user-container">
+	        <div>
+	          <i class="fas fa-user"></i>
+	        </div>
+	        <div class="user-description">
+	          <div>
+	            {{ userInfo.id }}
+	          </div>
+	          <div class="time">
+	            {{ userInfo.created }}
+	          </div>
+	        </div>
+	      </div>
+	  </div>
+	</template>
+	```
