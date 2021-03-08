@@ -2252,6 +2252,7 @@
 <br />
 
 ### 8.4. 2가지 데이터 흐름 비교
-1. [UserProfile에서 computed로 접근](https://github.com/eunhye8767/learn_vue_js_04#82-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84-%EC%B2%98%EB%A6%AC-1)하는 방식과 [UserView에서 propsfh 전달](https://github.com/eunhye8767/learn_vue_js_04#83-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84-%EC%B2%98%EB%A6%AC-2)하는 방식
-2. Vuex 구조에 적합한 로직 방법 = [UserProfile에서 computed로 접근](https://github.com/eunhye8767/learn_vue_js_04#82-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84-%EC%B2%98%EB%A6%AC-1)하는 방식
-3. 컴포넌트 간에 데이터 연관성의 이점을 알아볼 때 = [UserView에서 propsfh 전달](https://github.com/eunhye8767/learn_vue_js_04#83-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84-%EC%B2%98%EB%A6%AC-2)하는 방식
+- Vuex 구조에 적합한 로직 방법 = [UserProfile에서 computed로 접근하는 방식](https://github.com/eunhye8767/learn_vue_js_04#82-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84-%EC%B2%98%EB%A6%AC-1)
+- 컴포넌트 간에 데이터 연관성의 이점을 알아볼 때 = [UserView에서 propsfh 전달하는 방식](https://github.com/eunhye8767/learn_vue_js_04#83-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84-%EC%B2%98%EB%A6%AC-2)<br /><br />
+![8-4-1](./_images/8-4-1.png)<br />
+
