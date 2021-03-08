@@ -2344,3 +2344,13 @@
 - **< template slot="time" ></ template >**
 	- 생성되는 태그 없이 slot 컨텐츠 내용이 화면에 표시된다.<br />
 		![8-5-4](./_images/8-5-4.png)<br />
+		<br />
+
+### 8.6. 사용자 프로필 컴포넌트 스타일링 및 코드 정리
+1. [ ItemView.vue ] UserName 클릭 시 해당 User 정보로 페이지 이동되게 적용
+	```html
+	<!-- ItemView.vue -->
+	<router-link slot="username" :to="`/user/${fetchedItem.user}`">
+	  {{ fetchedItem.user }}
+	</router-link>
+	```
