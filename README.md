@@ -2175,3 +2175,79 @@
 	  </div>
 	</template>
 	```
+<br />
+
+### 8.3. 사용자 컴포넌트 데이터 흐름 처리 2
+1. props 기능을 활용하여 데이터 흐름을 처리한다
+2. [props(프롭스) 자세히보기](https://github.com/eunhye8767/learn_vue_js_01#43-props-%EC%86%8D%EC%84%B1)
+	```html
+	<!-- props: ['프롭스 이름'] -->
+	<app-header v-bind:propsdata="message"></app-header>
+	```
+	```javascript
+	var appHeader = {
+	  props: ['propsdata']
+	}
+	```
+3. [ UserView.vue ] props(프롭스) 데이터 전달
+	- props 이름 : info
+	- 데이터 전달 : userInfo
+	```html
+	<template>
+	  <div>
+	    <user-profile :info="userInfo"></user-profile>
+	  </div>
+	</template>
+
+	<script>
+	import UserProfile from '../components/UserProfile.vue'
+	export default {
+	  components: {
+	    UserProfile,
+	  },
+	  computed: {
+	    userInfo() {
+	      return this.$store.state.user;
+	    }
+	  },
+	  created() {
+	    const userName = this.$route.params.id;
+	    this.$store.dispatch('FETCH_USER', userName);
+	  }
+	}
+	</script>
+	```
+4. props를 [ UserProfile.vue ] 에서 명시
+	- props: [ 'info' ]
+	- props 를 info 로 받고, info의 타입을 Object 로 정의
+	```html
+	<!-- UserProfile.vuye -->
+	<template>
+	  <div>
+	    <div class="user-container">
+	        <div>
+	          <i class="fas fa-user"></i>
+	        </div>
+	        <div class="user-description">
+	          <div>
+	            {{ info.id }}
+	          </div>
+	          <div class="time">
+	            {{ info.created }}
+	          </div>
+	        </div>
+	      </div>
+	  </div>
+	</template>
+
+	<script>
+	export default {
+	  props: {
+	    info : Object,
+	  },
+	}
+	</script>
+	```
+	![8-3-1](./_images/8-3-1.png)<br />
+<br />
+
