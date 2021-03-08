@@ -2366,4 +2366,199 @@
 4. created에서 분기처리가 필요한 게 dispatch 이고, 해당 부분을 공통화하려고 한다.
 <br />
 
+### 9.2. 이벤트 버스를 이용한 스피너 컴포넌트 구현
+#### ※ 참고자료
+- [스피너 컴포넌트 소스 주소](https://github.com/joshua1988/vue-advanced/blob/12_spinner/vue-news/src/components/Spinner.vue)
+<br />
 
+#### 9.2.1. Spinner 컴포넌트 생성 및 적용하는 방법
+1. Mixin과 하이 오더 컴포넌트 적용 전, 해당 부분이 왜 좋은 지를 알기 위해 프로그레스바(=페이지 로딩바)를 적용하려고 한다.
+2. components 폴더에 Spinner.vue 파일을 생성하고 아래 코드를 그대로 적용한다
+	```html
+	<template>
+	  <div class="lds-facebook" v-if="loading">
+	    <div>
+	    </div>
+	    <div>
+	    </div>
+	    <div>
+	    </div>
+	  </div>
+	</template>
+
+	<script>
+	export default {
+	  props: {
+	    loading: {
+	      type: Boolean,
+	      required: true,
+	    },
+	  },
+	}
+	</script>
+
+	<style scoped>
+	.lds-facebook {
+	  display: inline-block;
+	  position: absolute;
+	  width: 64px;
+	  height: 64px;
+	  top: 47%;
+	  left: 47%;
+	}
+	.lds-facebook div {
+	  display: inline-block;
+	  position: absolute;
+	  left: 6px;
+	  width: 13px;
+	  background: #42b883;
+	  animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+	}
+	.lds-facebook div:nth-child(1) {
+	  left: 6px;
+	  animation-delay: -0.24s;
+	}
+	.lds-facebook div:nth-child(2) {
+	  left: 26px;
+	  animation-delay: -0.12s;
+	}
+	.lds-facebook div:nth-child(3) {
+	  left: 45px;
+	  animation-delay: 0;
+	}
+	@keyframes lds-facebook {
+	  0% {
+	    top: 6px;
+	    height: 51px;
+	  }
+	  50%, 100% {
+	    top: 19px;
+	    height: 26px;
+	  }
+	}
+	</style>	
+	```
+3. Spinner.vue가 실행되는 지를 확인하려면 App.vue에 아래와 같이 적용한다
+	```html
+	<template>
+	  <div id="app">
+	    <spinner :loading="true"></spinner>
+	  </div>
+	</template>
+
+	<script>
+	import Spinner from './components/Spinner.vue';
+
+	export default {
+	  components: {
+	    Spinner,
+	  },
+	}
+	</script>
+	```
+4. :loading="true" 로 적용을 하면 아래 이미지처럼 spinner가 보여진다.
+	- spinner가 언제 보여주고? 언제 사라지게 할 것인지? 기준을 적용해야 한다.
+	![9-2-1](./_images/9-2-1.png)<br />
+<br />
+
+#### 9.2.2. Spinner 기능 구현하는 방법
+1. [ 뷰 개발자도구 ] /news 페이지를 기준으로 컴포넌트 관계도를 확인한다
+	- Spinner의 Loading 상태를 전달하려면 NewsView 에서는 props를 내릴 수 없다
+	- 이벤트 버스를 통해 NewsView에서 Spinner를 관리하려고 한다<br />
+	![9-2-2](./_images/9-2-2.png)<br />
+
+2. src/utils/bus.js 파일 생성 (utils 폴더 생성하여 bus.js 새파일 만들기)
+
+3. **이벤트 버스란?**<br />빈 이벤트 객체를 하나 만들어서 그 이벤트 객체를 통해서 컴포넌트 간의 데이터 전달하는 것을 의미
+	- export default new Vue() == new Vue를 그대로 export 하는 것
+	- 이벤트 버스 경우, 라이프 사이클 훅에 보통 정의를 내린다.
+	```javascript
+	// utils/bus.js
+	import Vue from 'vue';
+
+	export default new Vue();
+	```
+
+4. [ NewsView.vue ] 이벤트 버스 에밋을 적용한다
+	```javascript
+	// NewsView.vue
+	import bus from '../utils/bus.js';
+
+	export default {
+	  created() {
+	    bus.$emit('start:spinner');
+	  }
+	}
+	```
+
+5. [ App.vue ] 이벤트 버스가 발생되면 Spinner를 실행시킨다.
+	- Spinner가 실행되는 메서드와 종료되는 메서드를 만든다
+	```html
+	<template>
+	  <div id="app">
+	    <spinner :loading="loadingStatus"></spinner>
+	  </div>
+	</template>	
+	```
+	```javascript
+	// App.vue
+	import bus from './utils/bus.js';
+
+	export default {
+	  components: {
+	    Spinner,
+	  },
+	  data() {
+	    return {
+	      loadingStatus: false,
+	    };
+	  },
+	  methods: {
+	    startSpinner() {
+	      this.loadingStatus = true;
+	    },
+	    endSpinner() {
+	      this.loadingStatus = false;
+	    }
+	  },
+	  created() {
+	    bus.$on('start:spinner', this.startSpinner)
+	  }
+	}
+	```
+
+6. 이벤트가 제대로 왔는 지는 [ 뷰 개발자도구 ]에서 확인한다<br />
+	![9-2-3](./_images/9-2-3.png)<br />
+
+7. 실행되고 난 후, 종료되는 Spinner 코드도 적용해준다
+	```javascript
+	// NewsView.vue
+	created() {
+	  bus.$emit('start:spinner');
+	  this.$store.dispatch('FETCH_NEWS');
+	  bus.$emit('end:spinner')
+	}
+
+	// App.vue
+	created() {
+	  bus.$on('start:spinner', this.startSpinner)
+	  bus.$on('end:spinner', this.endSpinner)
+	}
+	```
+
+8. **이벤트 버스 경우, beforeDestroy에서 off를 꼭 해줘야 한다!!**
+	- 이벤트 버스는 이벤트 객체로 계속 쌓이기 때문에 **컴포넌트의 역활이 끝나기 전에 꼭! off 를 해줘야** 한다.
+	```javascript
+	// App.vue
+	created() {
+	  bus.$on('start:spinner', this.startSpinner);
+	  bus.$on('end:spinner', this.endSpinner);
+	},
+	beforeDestroy() {
+	  bus.$off('start:spinner', this.startSpinner);
+	  bus.$off('end:spinner', this.endSpinner);
+	}
+	```
+
+9. 어떤 시점에서 start 를 하고? 어떤 시점에서 end 할 지? 기준을 적용해야 한다.
+<br />
