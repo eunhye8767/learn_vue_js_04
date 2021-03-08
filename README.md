@@ -2354,3 +2354,16 @@
 	  {{ fetchedItem.user }}
 	</router-link>
 	```
+<br />
+<br />
+<br />
+
+## 9. 리팩토링 3 - Mixin과 하이 오더 컴포넌트
+### 9.1. 컴포넌트 재활용 방법 및 재활용할 포인트 소개
+1. NewsView, AskView, JobsView 에 해당하는 페이지 컴포넌트를 재활용하려고 한다
+2. 3개의 페이지(NewsView, AskView, JobsView )는 list-item 태그에 데이터를 불러오고<br />분기처리는 ListItem.vue에서 처리하고 있다
+3. 공통화를 위해 ListItem.vue에 적용된 created() {} 코드를 각각의 페이지에 맞게 적용을 한다
+4. created에서 분기처리가 필요한 게 dispatch 이고, 해당 부분을 공통화하려고 한다.
+<br />
+
+

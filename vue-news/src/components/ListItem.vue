@@ -52,25 +52,6 @@ export default {
       }
     }
   },
-  created() {
-    // this.$store.dispatch('FETCH_NEWS');
-    // console.log(this.$route)
-
-    const name = this.$route.name;
-    const actionName = (name) => {
-      this.$store.dispatch(name);
-    };
-    if ( name === 'news') {
-      actionName('FETCH_NEWS');
-      // this.$store.dispatch('FETCH_NEWS');
-    } else if ( name === "ask") {
-      actionName('FETCH_ASK');
-      // this.$store.dispatch('FETCH_ASK')
-    } else if ( name === "jobs") {
-      actionName('FETCH_JOBS');
-      // this.$store.dispatch('FETCH_JOBS')
-    }
-	}
 }
 </script>
 
