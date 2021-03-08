@@ -2256,3 +2256,91 @@
 - 컴포넌트 간에 데이터 연관성의 이점을 알아볼 때 = [UserView에서 propsfh 전달하는 방식](https://github.com/eunhye8767/learn_vue_js_04#83-%EC%82%AC%EC%9A%A9%EC%9E%90-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%9D%90%EB%A6%84-%EC%B2%98%EB%A6%AC-2)<br /><br />
 ![8-4-1](./_images/8-4-1.png)<br />
 
+<br />
+
+### 8.5. slot을 이용한 사용자 프로필 컴포넌트 구현
+1. [ ItemView.vue ] UserProfile 컴포넌트를 이용하여 코드를 개선한다
+2. [ ItemView.vue ]
+	- v-bind:info에서 fetchedItem로 데이터를 넘겨받는다.
+	- store/index.js 에서 명시한 item=[] 으로 인해 에러 발송<br />
+		![8-5-1](./_images/8-5-1.png)<br />
+		- UserProfile.vue 에서 props를 Object = 객체로 받았기 때문에 store/index.js에서 명시한 배열로 인해 에러가 발생, 해당 부분을 배열이 아닌 객체로 수정해야 함.
+			```javascript
+			// store/index.js
+			item = {}
+			```
+	```html
+		<template>
+		  <div>
+		    <section>
+		      <!-- 사용자 정보 -->
+		      <user-profile :info="fetchedItem"></user-profile>
+		      <!-- <div class="user-container">
+		        <div>
+		          <i class="fas fa-user"></i>
+		        </div>
+		        <div class="user-description">
+		          <router-link :to="`/user/${fetchedItem.user}`">
+		            {{ fetchedItem.user }}
+		          </router-link>
+		          <div class="time">
+		            {{ fetchedItem.time_ago }}
+		          </div>
+		        </div>
+		      </div> -->
+		    </section>
+		  </div>
+		</template>	
+	```
+3. ItemView와 UserProfile 의 props 키 값이 달라 발생하는 오류 이슈
+	- UserProfile 에서의 id, created로 화면 출력한 값이 ItemView에서는 user, time_ago 로 에러 발생
+		- fetchedItem.user = id(UserProfile) 
+		- fetchedItem.time_ago = created(UserProfime)
+	![8-5-2](./_images/8-5-2.png)<br />
+
+4. slot을 이용하여 같은 컴포넌트에서 조건에 따라 화면 출력되는 내용을 바꾼다
+	- [중급강좌 - slot이란? 자세히보기](https://github.com/eunhye8767/learn_vue_js_02#41-%EB%AA%A8%EB%8B%AC-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%93%B1%EB%A1%9D)
+
+5. [ UserProfile.vue ] 2개의 slot 태그를 생성한다
+	- slot을 username, time 2개를 만들었다
+	```html
+	<template>
+	  <div>
+	    <div class="user-container">
+	        <div>
+	          <i class="fas fa-user"></i>
+	        </div>
+	        <div class="user-description">
+	          <!-- username <div>
+	            {{ info.id }}
+	          </div> -->
+	          <slot name="username"></slot>
+	          <div class="time">
+	            <!-- {{ info.created }} -->
+	            <slot name="time"></slot>
+	          </div>
+	        </div>
+	      </div>
+	  </div>
+	</template>	
+	```
+6. [ ItemView.vue ] user-profile 태그를 아래와 같이 적용한다
+	- UserView.vue 도 아래 코드를 참고하여 수정한다
+	```html
+	<user-profile :info="fetchedItem">
+	  <div slot="username">{{ fetchedItem.user }}</div>
+	  <template slot="time">{{ fetchedItem.time_ago }}</template>
+	</user-profile>	
+	```
+
+#### ※ 참고자료
+- [Props Validation API 문서 자세히보기](https://vuejs.org/v2/guide/components-props.html#Prop-Validation)
+- [Vue.js 중급 강좌 slot 강의 링크 자세히보기](https://www.inflearn.com/course/vue-pwa-vue-js-%EC%A4%91%EA%B8%89/lecture/11520?tab=curriculum)
+
+#### ※ slot를 template로 불러올 때
+- **< div slot="time" ></ div >**
+	- div 태그 생성과 함께 slot 컨텐츠 내용이 화면에 표시된다<br />
+		![8-5-3](./_images/8-5-3.png)<br />
+- **< template slot="time" ></ template >**
+	- 생성되는 태그 없이 slot 컨텐츠 내용이 화면에 표시된다.<br />
+		![8-5-4](./_images/8-5-4.png)<br />
