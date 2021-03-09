@@ -2633,3 +2633,106 @@
 	```
 
 5. AskView, JobsView 에도 동일하게 적용한다
+
+<br />
+
+### 9.4. 하이 오더 컴포넌트(HOC) 소개 및 구현
+#### 9.4.1. 하이 오더 컴포넌트(HOC) 소개
+- 컴포넌트의 코드를 재사용할 수 있는 기술 중 하나이다.
+- 리액트에서 하이 오더 컴포넌트를 가장 많이 쓰고 있다.<br />최근 리액트에서 훅이 나왔는데 그 이윤 컴포넌트 코드의 재사용성을 위해서 업데이트된 기능이다.
+- 하이 오더 컴포넌트는 컴포넌트 레벨이 깊어지는 단점이 있었기 때문에 리액트에서는 훅, Vue에서는 믹스인을 많이 사용하고 있다.
+- 하이 오더 컴포넌트는 **컴포넌트의 로직(코드)을 재사용하기 위한 고급 기술**이다.
+
+#### ※ 참고자료
+- [컴포넌트의 코드마저 재상용하는 하이 오더 컴포넌트 자세히보기](https://joshua1988.github.io/vue-camp/design/pattern5.html)
+- [리액트 하이 오더 컴포넌트 공식문서](https://reactjs.org/docs/higher-order-components.html)
+<br />
+
+#### 9.4.2. 하이 오더 컴포넌트(HOC) 구현
+1. [ routes/index.js ] news, ask, jobs - 총 3개는 같은 역활을 하고 있다
+2. 위의 내용을 기억해둔다<br />views 폴더에 CreateListView.js 파일을 생성하고 아래 코드를 적용한다
+	```javascript
+	// views/CreateListView.js
+	export default function createListView() {
+		// 재사용할 인스턴스(컴포넌트) 옵션들이 들어갈 자리
+	}
+	```
+	- *재사용할 인스턴스(컴포넌트) 옵션들이 들어갈 자리 - 예시*
+		```javascript
+		// views/CreateListView.js
+		export default function createListView() {
+		  // 재사용할 인스턴스(컴포넌트) 옵션들이 들어갈 자리
+		  el : '',
+		  data: '',
+		  components: {
+		    
+		  },
+		  created() {
+		    
+		  }
+		}
+		```
+3. CreatListView.js 를 routes/index.js 에서 사용하려고 한다
+	```javascript
+	// routes/index.js
+	import createListView from '../views/CreateListView.js';
+
+	export const router = new VueRouter({
+	  routes: [
+	    {
+	      path: '/news',
+	      name: 'news',
+	      // component: NewsView,
+	      component: createListView(NewsView),
+	    },
+	    {
+	      path: '/ask',
+	      name: 'ask',
+	      // component: AskView,
+	      component: createListView(AskView),
+	    },
+	    {
+	      path: '/jobs',
+	      name: 'jobs',
+	      // component: JobsView,
+	      component: createListView(JobsView),
+	    },
+	```
+
+4. createListView()가 하이 오더 컴포넌트 이다.<br />기존에 있었던 컴포넌트들의 위의 하나 컴포넌트가 더 생기는 것이다
+ - 아래 이미지 중 화살표 친 부분에 하이 오더 컴포넌트가 생성될 자리<br />
+	![9-4-1](./_images/9-4-1.png)<br />
+
+5. CreateListView.js - createListView 함수에 인자로 name을 받는다.
+	```javascript
+	export default function createListView(name) {
+
+	}	
+	```
+
+6. render 함수를 이용하여 로직(코드) 적용
+	- 내부적으로 템플릿을 컴파일레이션 변환을 해주고 변환을 할 때 render 함수를 사용한다
+	- render 함수로 컴포넌트를 로딩을 한다는 것이다.
+	```javascript
+	export default function createListView(name) {
+	  // 재사용할 인스턴스(컴포넌트) 옵션들이 들어갈 자리
+	  name : name,  // 'NewsView'
+	  render(createElement) {
+	    return createElement();
+	  }
+	}
+	```
+
+7. views/ListView.vue 라는 컴포넌트를 생성한다
+8. CreateListView.js 에서 ListView를 import 한다
+	```javascript
+	import ListView from './ListView.vue';
+
+	export default function createListView(name) {
+	  // 재사용할 인스턴스(컴포넌트) 옵션들이 들어갈 자리
+	  name : name,  // 'NewsView'
+	  render(createElement) {
+	    return createElement(ListView);
+	  }
+	}
+	```
