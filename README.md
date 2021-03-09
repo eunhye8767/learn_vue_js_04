@@ -2562,3 +2562,74 @@
 
 9. 어떤 시점에서 start 를 하고? 어떤 시점에서 end 할 지? 기준을 적용해야 한다.
 <br />
+
+### 9.3. 스피너 실행 및 종료 시점 알아보기
+1. [ store/actions.js ] fetchNewsList().then()에 return response 를 추가한다.
+	- return response 를 주면 NewsView.vue 에서 then()으로 체인링할 수 있다.
+	- return response 를 넣지 않더라도 this.$store.dispatch('FETCH_NEWS').then()으로 코드를 작성할 순 있지만, 해당 코드가 액션 함수 내부에서 실행된 비동기 처리 코드를 기다려주진 않는다.<br />따라서, 비동기 처리 결과인 데이터 호출 값을 컴포넌트까지 넘겨주기 위해서는 **return 데이터 응답** 코드를 넣어주셔야 한다.<br />다시 정리하면 **actions 함수의 호출 결과에는 반드시 Promise 객체가 있어야 하기 때문에 return 코드가 필요**하다.
+	```javascript
+	// actions.js
+	export default {
+	  FETCH_NEWS(context) {
+	    fetchNewsList()
+	      .then( response => {
+	        context.commit('SET_NEWS', response.data);
+	        return response;
+	      })
+	      .catch( error => console.log(error))
+	  },
+	}
+
+2. actions.js 에서 프로미스 객체 responese를 반환하였기 때문에<br />반환한 객체를 가지고 NewsView에서 then 으로 계속 추가적인 처리를 할 수 있다.
+	- [ actions.js ] response를 받아오고 conttext.commit(뮤테이션으로) 데이터를 보내주고 return response(응답 데이터를 화면으로 계속 보낸다)
+	- this.$store.dispatch('FETCH_NEWS')에서 호출 받은 데이터를 컴포넌트 단에서 접근하려면 .then()으로 체이닝해야 된다는 의미
+	```javascript
+	// NewsView.vue
+	export default {
+	  created() {
+	    this.$store.dispatch('FETCH_NEWS')
+	      .then()
+	      .catch();
+	  }
+	}
+	```
+
+3. [ NewsView.vue ] dispatch(데이터 호출) 성공(then), 실패(catch) 시 실행할 로직을 적용한다.
+	- 성공(then) : fetched 콘솔로그 메세지가 보여지고 spinner 이벤트 종료를 실행한다
+	- 실패(catch) : error 콘솔로그 메세지가 보여진다.
+	```javascript
+	// NewsView.vue
+	export default {
+	  created() {
+	    bus.$emit('start:spinner');
+	    this.$store.dispatch('FETCH_NEWS')
+	      .then( ()=> {
+	        console.log('fetched');
+	        bus.$emit('end:spinner')
+	      })
+	      .catch( (error)=> {
+	        console.log(error);
+	      });
+	  }
+	```
+
+4. [ NewsView.vue ] 로직이 제대로 잘 되는 지 확인하기 위해 setTimeout을 이용하려고 한다
+	```javascript
+	export default {
+	  created() {
+	    bus.$emit('start:spinner');
+	    setTimeout(() => {
+	      this.$store.dispatch('FETCH_NEWS')
+	        .then( ()=> {
+	          console.log('fetched');
+	          bus.$emit('end:spinner')
+	        })
+	        .catch( (error)=> {
+	          console.log(error);
+	        });
+	    }, 3000);
+	  }
+	}
+	```
+
+5. AskView, JobsView 에도 동일하게 적용한다
