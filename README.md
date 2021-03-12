@@ -2300,6 +2300,7 @@
 
 4. slot을 이용하여 같은 컴포넌트에서 조건에 따라 화면 출력되는 내용을 바꾼다
 	- [중급강좌 - slot이란? 자세히보기](https://github.com/eunhye8767/learn_vue_js_02#41-%EB%AA%A8%EB%8B%AC-%EC%BB%B4%ED%8F%AC%EB%84%8C%ED%8A%B8-%EB%93%B1%EB%A1%9D)
+	- [설명 - slot 코드 형식](https://joshua1988.github.io/vue-camp/reuse/slots.html#%EC%8A%AC%EB%A1%AF-%EC%BD%94%EB%93%9C-%ED%98%95%EC%8B%9D)
 
 5. [ UserProfile.vue ] 2개의 slot 태그를 생성한다
 	- slot을 username, time 2개를 만들었다
@@ -2342,7 +2343,8 @@
 	- div 태그 생성과 함께 slot 컨텐츠 내용이 화면에 표시된다<br />
 		![8-5-3](./_images/8-5-3.png)<br />
 - **< template slot="time" ></ template >**
-	- 생성되는 태그 없이 slot 컨텐츠 내용이 화면에 표시된다.<br />
+	- 생성되는 태그 없이 slot 컨텐츠 내용이 화면에 표시된다.
+	- template 태그는 화면에 그려질 HTML 태그가 없다.<br />
 		![8-5-4](./_images/8-5-4.png)<br />
 		<br />
 
@@ -2683,19 +2685,19 @@
 	      path: '/news',
 	      name: 'news',
 	      // component: NewsView,
-	      component: createListView(NewsView),
+	      component: createListView('NewsView'),
 	    },
 	    {
 	      path: '/ask',
 	      name: 'ask',
 	      // component: AskView,
-	      component: createListView(AskView),
+	      component: createListView('AskView'),
 	    },
 	    {
 	      path: '/jobs',
 	      name: 'jobs',
 	      // component: JobsView,
-	      component: createListView(JobsView),
+	      component: createListView('JobsView'),
 	    },
 	```
 
@@ -2706,7 +2708,9 @@
 5. CreateListView.js - createListView 함수에 인자로 name을 받는다.
 	```javascript
 	export default function createListView(name) {
+		return {
 
+		}
 	}	
 	```
 
@@ -2715,11 +2719,13 @@
 	- render 함수로 컴포넌트를 로딩을 한다는 것이다.
 	```javascript
 	export default function createListView(name) {
-	  // 재사용할 인스턴스(컴포넌트) 옵션들이 들어갈 자리
-	  name : name,  // 'NewsView'
-	  render(createElement) {
-	    return createElement();
-	  }
+		return {
+	  	// 재사용할 인스턴스(컴포넌트) 옵션들이 들어갈 자리
+	  	name : name,  // 'NewsView'
+	  	render(createElement) {
+	  	  return createElement();
+	  	}
+		}
 	}
 	```
 
@@ -2734,5 +2740,198 @@
 	  render(createElement) {
 	    return createElement(ListView);
 	  }
+	}
+	```
+<br />
+
+### 9.5. 하이 오더 컴포넌트에서 사용할 ListView 컴포넌트 구현
+1. ListView의 역활 = 데이터를 불러와서 화면에 보여지게 뿌려주는 역활.
+	- NewsView, AskView, JobsView에 적용했던 내용을 ListView에 위임(=적용)한다
+
+2. [ ListView.vue ] list-item 컴포넌트 태그를 적용한다
+	```html
+	<template>
+	  <div>
+	    <list-item></list-item>
+	  </div>
+	</template>
+
+	<script>
+	import ListItem from '../components/ListItem.vue';
+
+	export default {
+	  components: {
+	    ListItem,
+	  }
+	}
+	</script>
+	```
+
+3. NewsView, AskView, JobsView에 적용된 created() 코드를 재활용하려고 한다
+	- createListView.js == created() 코드로 데이터를 요청
+	- ListView.vue == 하이 오더 컴포넌트로 등록된 list-item의 데이터를 흘려 보내준다
+
+4. [ store/index.js ] NewsView, AskView, JobsView 데이터를 불러오는 상태를 별도로 만든다.
+	- state 속성에 list 배열 속성을 만든다
+		```javascript
+		// store/index.js
+		export const store = new Vuex.Store({
+		  state: {
+		    news: [],
+		    jobs: [],
+		    ask : [],
+		    list: [],
+		  },		
+		```
+
+5. [ store/action.js ] FETCH_LIST() 액션을 만든다.
+	- FETCH_LIST() 액션 생성으로 인해 api도 만들어줘야 한다
+	```javascript
+	// store/action.js
+	export default {
+		FETCH_LIST() {
+    
+  	}
+	```
+
+6. [ api/index.js ] fetchList 함수를 생성하여 페이지 이름(pageName)에 따라 axios 호출한다
+	- pageName을 인자로 받아 해당 이름에 따라 axios 호출
+	```javascript
+	function fetchNewsList() {
+	  return axios.get(`${config.baseUrl}news/1.json`);
+	};
+	function fetchJobsList() {
+	  return axios.get(`${config.baseUrl}jobs/1.json`);
+	};
+	function fetchAskList() {
+	  return axios.get(`${config.baseUrl}ask/1.json`);
+	};
+	function fetchList(pageName) {
+	  return axios.get(`${config.baseUrl}${pageName}/1.json`);
+	}
+
+	export {
+	  fetchNewsList,
+	  fetchJobsList,
+	  fetchAskList,
+	  fetchList
+	};
+	```
+
+7. [ store/actions.js ] 생성한 fetchList 를 불러온다
+	```javascript
+	// actions.js 
+	import { 
+	  fetchList,
+	} from '../api/index.js';
+	
+	export default {
+	  FETCH_LIST( {commit}, pageName) {
+	    fetchList(pageName)
+	      .then(({data}) => commit('SET_LIST', data))
+	      .catch(error => console.log(error))
+	  }	
+	```
+
+8. [ CreateListView.js ] created()에서 FETCH_LIST를 호출한다
+	- NewsView, AskView, JobsView에 적용되었던 created() 코드 적용
+	- dispatch를 FETCH_LIST 호출하고 name 값을 보낸다
+	```javascript
+	// CreateListView.js
+	import ListView from './ListView.vue';
+	import bus from '../utils/bus.js'k
+
+	export default function createListView(name) {
+	  // 재사용할 인스턴스(컴포넌트) 옵션들이 들어갈 자리
+	  return {
+	    name : name,
+	    created() {
+	      bus.$emit('start:spinner');
+	      setTimeout(() => {
+	        this.$store.dispatch('FETCH_LIST', this.$route.name)
+	          .then( ()=> {
+	            console.log('fetched');
+	            bus.$emit('end:spinner')
+	          })
+	          .catch( (error)=> {
+	            console.log(error);
+	          });
+	      }, 3000);
+	    },
+	    render(createElement) {
+	      return createElement(ListView);
+	    }
+	  }
+	}	
+	```
+
+9. [ store/mutations.js ] SET_LIST() 속성을 추가한다
+	```javascript
+	// mutations.js
+	export default {
+	  SET_LIST(state, list) {
+	    state.list = list
+	  },
+	}
+	```
+
+10. 콘솔로그 'fetched' 메세지는 보여지는데, 화면에 출력되지 않았다.<br />데이터가 제대로 불려와졌는 지 확인해야한다<br />
+	![9-5-1](./_images/9-5-1.png)<br />
+
+11. [ 뷰 개발자도구 ] SET_LIST - state/list 에 데이터가 담겨있는 것을 확인할 수 있다<br />
+	![9-5-2](./_images/9-5-2.png)<br />
+
+12. 여기에서 알 수 있는 것이 **list 데이터를 화면에** 뿌려주면 된다
+
+13. **화면에 list를 출력시켜주는 것이 [ components/ListItem.vue ] 였다.**
+
+14. [ components/ListItem.vue ] route(라우터)를 본 파일에서 분기처리할 필요가 없다
+	- 위 컴포넌트에서 분기처리를 해주었기 때문에 아래 코드를 수정한다
+		```javascript
+		listItems() {
+		  const name = this.$route.name;
+		  if ( name === 'news') {
+		    return this.$store.state.news;
+		  } else if ( name === "ask") {
+		    return this.$store.state.ask;
+		  } else if ( name === "jobs") {
+		    return this.$store.state.jobs;
+		  }
+		}
+		```
+	- 위의 코드를 아래와 같이 수정한다
+		```javascript
+		listItem() {
+		  return this.$store.state.list;
+		}
+		```
+	
+15. 정상적으로 화면이 노출되는 것을 확인할 수 있다<br />
+	![9-5-3](./_images/9-5-3.png)<br />
+
+16. [ NewsView.vue, AskView.vue, JobsView.vue ] created() 속성에<br />setTimeout()이 적용되어 있는데, setTimeout()를 제거해준다.
+	- setTimeout() 을 제거하고 아래와 같이 수정한다
+	- setTimeout 후 cleartimeout도 했어야 하는데 해당 부분을 못 해주었다
+	```javascript
+	created() {
+	  bus.$emit('start:spinner');
+	  this.$store.dispatch('FETCH_NEWS')
+	    .then( ()=> {
+	      console.log('fetched');
+	      bus.$emit('end:spinner')
+	    })
+	    .catch( (error)=> {
+	      console.log(error);
+	    });
+	  // setTimeout(() => {
+	  //   this.$store.dispatch('FETCH_NEWS')
+	  //     .then( ()=> {
+	  //       console.log('fetched');
+	  //       bus.$emit('end:spinner')
+	  //     })
+	  //     .catch( (error)=> {
+	  //       console.log(error);
+	  //     });
+	  // }, 3000);
 	}
 	```
