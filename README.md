@@ -2935,3 +2935,46 @@
 	  // }, 3000);
 	}
 	```
+	<br />
+
+### 9.6. 하이 오더 컴포넌트가 적용된 앱 구조 설명 및 흐름 정리
+1. 새로 만든 CreateListView.js 파일이 **"하이 오더 컴포넌트"** 이다.
+	- news, jobs, ask 의 코드 재활용(동일한 구조, 기능)으로 하이 오더 컴포넌트 파일을 만들었다.
+2. CreateListView.js - 코드 수정 (setTimeout 삭제)
+	```javascript
+	created() {
+	  bus.$emit('start:spinner');
+	  this.$store.dispatch('FETCH_LIST', this.$route.name)
+	    .then( ()=> {
+	      console.log('fetched');
+	      bus.$emit('end:spinner')
+	    })
+	    .catch( (error)=> {
+	      console.log(error);
+	    });
+	},
+	```
+3. 하이 오더 컴포넌트 파일 생성으로 **불필요한 코드는 삭제한다**
+	- routes/index.js
+		```javascript
+		// routes/index.js
+		// 아래 코드 삭제
+		import NewsView from '../views/NewsView.vue';
+		import AskView from '../views/AskView.vue';
+		import JobsView from '../views/JobsView.vue';
+
+		{ component: NewsView }
+		{ component: AskView }
+		{ component: JobsView }
+		```
+	- 이 외에 불필요한 코드는 삭제한다
+
+4. [ routes/index.js ] 하이 오더 컴포넌트로 components에 적용되었다
+	- 'NewsView' 처럼 네이밍을 적어준다
+	```javascript
+	component: createListView('NewsView')
+	```
+	![9-6-1](./_images/9-6-1.png)<br />
+
+5. 불필요한 컴포넌트 .vue 페이지를 삭제한다
+	- 폴더 views : NewsView, JobsView, AskView
